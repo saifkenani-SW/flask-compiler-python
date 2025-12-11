@@ -26,4 +26,6 @@ bin/
 .vscode/
 
 ### Mac OS ###
-.DS_Store
+.DS_Store.idea/
+*.iml
+src/gen/
