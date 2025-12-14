@@ -2,14 +2,11 @@ parser grammar TemplateParser;
 
 options { tokenVocab=TemplateLexer; }
 
-/* ========================
-   Root
-======================== */
+
 document
   : block EOF
   ;
 
-/* كتلة بدون EOF (تُستخدم داخل if/for) */
 block
   : node*
   ;
@@ -22,9 +19,6 @@ node
   | TEXT
   ;
 
-/* ========================
-   HTML
-======================== */
 htmlElement
   : openTag htmlContent closeTag
   ;
@@ -37,7 +31,7 @@ closeTag
   : LT_SLASH NAME GT
   ;
 
-/* يتوقف قبل LT_SLASH */
+
 htmlContent
   : ( {self._input.LA(1) != self.LT_SLASH}? htmlNode )*
   ;
@@ -49,16 +43,12 @@ htmlNode
   | TEXT
   ;
 
-/* ========================
-   Jinja print
-======================== */
+
 jinjaPrint
   : JPRINT_OPEN expr JPRINT_CLOSE
   ;
 
-/* ========================
-   Jinja statements
-======================== */
+
 jinjaStmt
   : jinjaIf
   | jinjaFor
@@ -81,9 +71,7 @@ jinjaSet
   : JSTMT_OPEN SET NAME ASSIGN expr JSTMT_CLOSE
   ;
 
-/* ========================
-   CSS
-======================== */
+
 cssBlock
   : CSS_BLOCK_START
     cssRule*
@@ -114,9 +102,7 @@ cssValue
   | STRING
   ;
 
-/* ========================
-   Expressions
-======================== */
+
 expr : orExpr ;
 
 orExpr  : andExpr (OR andExpr)* ;

@@ -1,8 +1,5 @@
 lexer grammar TemplateLexer;
 
-/* =========================
-   TOKENS (تعريف الأنواع مرة واحدة)
-========================= */
 tokens {
   JPRINT_OPEN, JPRINT_CLOSE,
   JSTMT_OPEN, JSTMT_CLOSE,
@@ -22,9 +19,6 @@ tokens {
   TEXT
 }
 
-/* =========================
-   FRAGMENTS
-========================= */
 fragment ID_START : [a-zA-Z_] ;
 fragment ID_CONT  : [a-zA-Z0-9_.$-] ;
 fragment ID       : ID_START ID_CONT* ;
@@ -38,46 +32,40 @@ fragment STR      : STR_DQ | STR_SQ ;
 
 fragment WS_CH    : [ \t\r\n]+ ;
 
-/* =========================
-   DEFAULT MODE
-========================= */
 
-/* Jinja print */
 JPRINT_OPEN_R
   : '{{' -> type(JPRINT_OPEN), pushMode(JINJA_EXPR)
   ;
 
-/* CSS block start */
+
 CSS_BLOCK_START_R
   : '{%' WS_CH* 'css' WS_CH* '%}'
     -> type(CSS_BLOCK_START), pushMode(CSS_MODE)
   ;
 
-/* Jinja statement open */
+
 JSTMT_OPEN_R
   : '{%' -> type(JSTMT_OPEN), pushMode(JINJA_STMT)
   ;
 
-/* HTML closing tag start </ */
+
 LT_SLASH_R
   : '</' -> type(LT_SLASH), pushMode(HTML_TAG)
   ;
 
-/* HTML opening tag < */
+
 LT_R
   : '<' -> type(LT), pushMode(HTML_TAG)
   ;
 
-/* Text outside */
+
 TEXT_R
   : ( ~[<{] | '{' ~[{%] )+ -> type(TEXT)
   ;
 
 WS_R : WS_CH -> skip ;
 
-/* =========================
-   HTML TAG MODE
-========================= */
+
 mode HTML_TAG;
 
 TAG_WS : WS_CH -> skip ;
@@ -91,9 +79,7 @@ NAME_TAG
 
 ERR_TAG : . -> skip ;
 
-/* =========================
-   JINJA EXPR MODE {{ }}
-========================= */
+
 mode JINJA_EXPR;
 
 JPRINT_CLOSE_R
@@ -127,9 +113,7 @@ NAME_R   : ID  -> type(NAME) ;
 
 ERR_EXPR : . -> skip ;
 
-/* =========================
-   JINJA STMT MODE {% %}
-========================= */
+
 mode JINJA_STMT;
 
 JSTMT_CLOSE_R
@@ -146,7 +130,7 @@ ENDFOR_R : 'endfor' -> type(ENDFOR) ;
 IN_R     : 'in'     -> type(IN) ;
 SET_R    : 'set'    -> type(SET) ;
 
-/* Operators / expressions */
+//exp
 ASSIGN_R : '=' -> type(ASSIGN) ;
 
 EQ_S  : '==' -> type(EQ) ;
@@ -174,12 +158,9 @@ NAME_S   : ID  -> type(NAME) ;
 
 ERR_STMT : . -> skip ;
 
-/* =========================
-   CSS MODE
-========================= */
+//CSS
 mode CSS_MODE;
 
-/* endcss */
 CSS_BLOCK_END_R
   : '{%' WS_CH* 'endcss' WS_CH* '%}'
     -> type(CSS_BLOCK_END), popMode
@@ -194,7 +175,6 @@ RBRACE_R : '}' -> type(RBRACE) ;
 COLON_R  : ':' -> type(COLON) ;
 SEMI_R   : ';' -> type(SEMI) ;
 
-/* دعم font-size */
 DASH_R : '-' -> type(MINUS) ;
 
 NUMBER_C : NUM -> type(NUMBER) ;
