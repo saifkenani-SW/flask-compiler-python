@@ -59,3 +59,13 @@ TRIPLE_SQ_STRING
 // Numbers
 FLOAT    : [0-9]+ '.' [0-9]+ ;
 INT      : [0-9]+ ;
+
+// Assignment and Arithmetic Operators
+EQ       : '=' ;
+PLUS     : '+' ;
+MINUS    : '-' ;
+STAR     : '*' ;
+SLASH    : '/' ;
+PERCENT  : '%' ;
+PLUSEQ   : '+=';
+MINUSEQ  : '-=';
