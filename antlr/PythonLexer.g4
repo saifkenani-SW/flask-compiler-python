@@ -98,6 +98,10 @@ RBRACK   : ']' ;
 LBRACE   : '{' ;
 RBRACE   : '}' ;
 
+LINE_CONTINUATION
+    : '\\' '\r'? '\n' -> skip
+    ;
+
 // NEWLINE
 NEWLINE  : '\r'? '\n' ;
 
