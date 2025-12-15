@@ -91,3 +91,6 @@ LBRACK   : '[' ;
 RBRACK   : ']' ;
 LBRACE   : '{' ;
 RBRACE   : '}' ;
+
+// NEWLINE
+NEWLINE  : '\r'? '\n' ;
