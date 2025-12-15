@@ -4,6 +4,12 @@ lexer grammar PythonLexer;
 package gen;
 }
 
+@lexer::superClass {
+    PythonBasicLexerBase
+}
+
+tokens { INDENT, DEDENT }
+
 
 
 
