@@ -12,22 +12,35 @@ tokens { INDENT, DEDENT }
 // KeyWord
 DEF      : 'def' ;
 IF       : 'if' ;
+ELIF     : 'elif' ;
 ELSE     : 'else' ;
 FOR      : 'for' ;
 WHILE    : 'while' ;
 RETURN   : 'return' ;
 BREAK    : 'break' ;
+CONTINUE : 'continue' ;
+PASS     : 'pass' ;
 GLOBAL   : 'global' ;
 WITH     : 'with' ;
 AS       : 'as' ;
+
+FROM     : 'from' ;
+IMPORT   : 'import' ;
+CLASS    : 'class' ;
+TRY      : 'try' ;
+EXCEPT   : 'except' ;
+FINALLY  : 'finally' ;
+RAISE    : 'raise' ;
+ASSERT   : 'assert' ;
 
 
 // Logical Operators
 AND      : 'and';
 OR       : 'or';
-NOT      : 'not';
 IN       : 'in';
-IS       : 'is';
+//ISNOT   : 'is not';
+IS      : 'is';
+NOT     : 'not';
 LAMBDA   : 'lambda';
 
 
@@ -35,6 +48,15 @@ LAMBDA   : 'lambda';
 TRUE     : 'True' ;
 FALSE    : 'False' ;
 NONE     : 'None' ;
+
+// Punctuation and decorators
+AT       : '@';
+DOT      : '.' ;
+COMMA    : ',' ;
+COLON    : ':' ;
+SEMICOLON: ';' ;
+ELLIPSIS : '...' ;
+ARROW    : '->' ;
 
 
 //  Double-Character Operators
@@ -45,8 +67,6 @@ WALRUS     : ':='; // if (n := len(data)) > 10
 
 
 
-// Identifiers ( app, Flask, next_id, allowed_file, __name__)
-ID       : [a-zA-Z_][a-zA-Z_0-9]* ;
 
 
 
@@ -59,8 +79,12 @@ STRING
     ;
 
 // Numbers
-FLOAT    : [0-9]+ '.' [0-9]+ ;
-INT      : [0-9]+ ;
+FLOAT    : [0-9]+ '.' [0-9]+
+         | '.' [0-9]+ ;
+INT      : [0-9]+
+         | '0x' [0-9a-fA-F]+ // Hex
+         | '0o' [0-7]+  // Oct
+         | '0b' [01]+ ; // Binary
 
 // Assignment and Arithmetic Operators
 EQ       : '=' ;
@@ -73,6 +97,10 @@ STAREQ   : '*=';
 SLASHEQ  : '/=';
 PLUSEQ   : '+=';
 MINUSEQ  : '-=';
+POWEREQ  : '**=' ;
+FLOORDIVEQ: '//=' ;
+BITANDEQ : '&=' ;
+BITOREQ  : '|=' ;
 
 // Comparison Operators
 EQEQ     : '==' ;
@@ -82,11 +110,6 @@ GTE      : '>=' ;
 LTE      : '<=' ;
 NOTEQ    : '!=';
 
-// Punctuation and decorators
-DOT      : '.' ;
-COMMA    : ',' ;
-COLON    : ':' ;
-AT       : '@';
 
 // Braces
 LPAREN   : '(' ;
@@ -99,6 +122,8 @@ RBRACE   : '}' ;
 LINE_CONTINUATION
     : '\\' '\r'? '\n' -> skip
     ;
+// Identifiers ( app, Flask, next_id, allowed_file, __name__)
+ID       : [a-zA-Z_][a-zA-Z_0-9]* ;
 
 // NEWLINE
 NEWLINE  : '\r'? '\n' ;
@@ -106,3 +131,5 @@ NEWLINE  : '\r'? '\n' ;
 // Whitespace and Comments
 WS       : [ \t]+ -> skip;
 COMMENT  : '#' ~[\r\n]* -> skip;
+
+ERROR_CHAR : . ;
