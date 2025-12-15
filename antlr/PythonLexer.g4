@@ -41,6 +41,8 @@ NONE     : 'None' ;
 ID       : [a-zA-Z_][a-zA-Z_0-9]* ;
 
 
+
+//String
 STRING
     : '"'  ( ~["\\\r\n] | '\\' . )* '"'
     | '\'' ( ~['\\\r\n] | '\\' . )* '\''
@@ -53,3 +55,7 @@ TRIPLE_DQ_STRING
 TRIPLE_SQ_STRING
     : '\'\'\'' ( . | '\r' | '\n' )*? '\'\'\''
     ;
+
+// Numbers
+FLOAT    : [0-9]+ '.' [0-9]+ ;
+INT      : [0-9]+ ;
