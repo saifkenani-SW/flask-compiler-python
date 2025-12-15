@@ -83,3 +83,11 @@ DOT      : '.' ;
 COMMA    : ',' ;
 COLON    : ':' ;
 AT       : '@';
+
+// Braces
+LPAREN   : '(' ;
+RPAREN   : ')' ;
+LBRACK   : '[' ;
+RBRACK   : ']' ;
+LBRACE   : '{' ;
+RBRACE   : '}' ;
