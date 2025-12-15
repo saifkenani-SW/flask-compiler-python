@@ -60,6 +60,12 @@ TRIPLE_SQ_STRING
 FLOAT    : [0-9]+ '.' [0-9]+ ;
 INT      : [0-9]+ ;
 
+
+//  Double-Character Operators
+POWER      : '**'; // value = 2 ** 2
+FLOORDIV   : '//'; //  value = 2 // 2
+WALRUS     : ':='; // if (n := len(data)) > 10
+
 // Assignment and Arithmetic Operators
 EQ       : '=' ;
 PLUS     : '+' ;
