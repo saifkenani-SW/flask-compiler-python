@@ -9,7 +9,7 @@ package gen;
 
 tokens { INDENT, DEDENT }
 
-
+// KeyWord
 DEF      : 'def' ;
 IF       : 'if' ;
 ELSE     : 'else' ;
@@ -31,4 +31,8 @@ IS       : 'is';
 LAMBDA   : 'lambda';
 
 
+// Constants and Reserved Values
+TRUE     : 'True' ;
+FALSE    : 'False' ;
+NONE     : 'None' ;
 
