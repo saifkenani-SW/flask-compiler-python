@@ -69,3 +69,11 @@ SLASH    : '/' ;
 PERCENT  : '%' ;
 PLUSEQ   : '+=';
 MINUSEQ  : '-=';
+
+// Comparison Operators
+EQEQ     : '==' ;
+GT       : '>' ;
+LT       : '<' ;
+GTE      : '>=' ;
+LTE      : '<=' ;
+NOTEQ    : '!=';
