@@ -77,3 +77,9 @@ LT       : '<' ;
 GTE      : '>=' ;
 LTE      : '<=' ;
 NOTEQ    : '!=';
+
+// Punctuation and decorators
+DOT      : '.' ;
+COMMA    : ',' ;
+COLON    : ':' ;
+AT       : '@';
