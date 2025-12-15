@@ -37,6 +37,14 @@ FALSE    : 'False' ;
 NONE     : 'None' ;
 
 
+//  Double-Character Operators
+POWER      : '**'; // value = 2 ** 2
+FLOORDIV   : '//'; //  value = 2 // 2
+WALRUS     : ':='; // if (n := len(data)) > 10
+
+
+
+
 // Identifiers ( app, Flask, next_id, allowed_file, __name__)
 ID       : [a-zA-Z_][a-zA-Z_0-9]* ;
 
@@ -46,25 +54,13 @@ ID       : [a-zA-Z_][a-zA-Z_0-9]* ;
 STRING
     : '"'  ( ~["\\\r\n] | '\\' . )* '"'
     | '\'' ( ~['\\\r\n] | '\\' . )* '\''
-    ;
-
-TRIPLE_DQ_STRING
-    : '"""' ( . | '\r' | '\n' )*? '"""'
-    ;
-
-TRIPLE_SQ_STRING
-    : '\'\'\'' ( . | '\r' | '\n' )*? '\'\'\''
+    | '"""' ( . | '\r' | '\n' )*? '"""'
+    | '\'\'\'' ( . | '\r' | '\n' )*? '\'\'\''
     ;
 
 // Numbers
 FLOAT    : [0-9]+ '.' [0-9]+ ;
 INT      : [0-9]+ ;
-
-
-//  Double-Character Operators
-POWER      : '**'; // value = 2 ** 2
-FLOORDIV   : '//'; //  value = 2 // 2
-WALRUS     : ':='; // if (n := len(data)) > 10
 
 // Assignment and Arithmetic Operators
 EQ       : '=' ;
@@ -73,6 +69,8 @@ MINUS    : '-' ;
 STAR     : '*' ;
 SLASH    : '/' ;
 PERCENT  : '%' ;
+STAREQ   : '*=';
+SLASHEQ  : '/=';
 PLUSEQ   : '+=';
 MINUSEQ  : '-=';
 
