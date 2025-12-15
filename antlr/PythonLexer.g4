@@ -28,7 +28,7 @@ OR       : 'or';
 NOT      : 'not';
 IN       : 'in';
 IS       : 'is';
-LAMBDA   : 'lambda'; // Comprehensive coverage
+LAMBDA   : 'lambda';
 
 
 
