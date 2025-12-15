@@ -36,3 +36,7 @@ TRUE     : 'True' ;
 FALSE    : 'False' ;
 NONE     : 'None' ;
 
+
+// Identifiers ( app, Flask, next_id, allowed_file, __name__)
+ID       : [a-zA-Z_][a-zA-Z_0-9]* ;
+
