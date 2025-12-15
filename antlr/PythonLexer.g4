@@ -22,5 +22,13 @@ WITH     : 'with' ;
 AS       : 'as' ;
 
 
+// Logical Operators
+AND      : 'and';
+OR       : 'or';
+NOT      : 'not';
+IN       : 'in';
+IS       : 'is';
+LAMBDA   : 'lambda'; // Comprehensive coverage
+
 
 
