@@ -31,7 +31,7 @@ IS       : 'is';
 LAMBDA   : 'lambda';
 
 
-// Constants and Reserved Values
+// Bool Values
 TRUE     : 'True' ;
 FALSE    : 'False' ;
 NONE     : 'None' ;
