@@ -94,3 +94,7 @@ RBRACE   : '}' ;
 
 // NEWLINE
 NEWLINE  : '\r'? '\n' ;
+
+// Whitespace and Comments
+WS       : [ \t]+ -> skip;
+COMMENT  : '#' ~[\r\n]* -> skip;
