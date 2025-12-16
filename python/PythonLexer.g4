@@ -164,7 +164,13 @@ VOID_TAG
 HTML_ID : [a-zA-Z][a-zA-Z0-9-]* ;
 HTML_EQ : '=' ;
 
+// Jinja2
+TEMPLATE_JINJA_BLOCK_START: '{%' -> pushMode(JINJA_BLOCK_MODE);
 
+
+mode JINJA_BLOCK_MODE;
+
+BLOCK_END: '%}' -> popMode ;
 
 
 
