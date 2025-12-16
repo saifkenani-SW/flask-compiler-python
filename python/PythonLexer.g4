@@ -221,6 +221,14 @@ EXPR_PERCENT  : '%' ;
 EXPR_POWER    : '**' ;
 EXPR_FLOORDIV : '//' ;
 
+//   Comparison Operators
+EXPR_EQEQ     : '==' ;
+EXPR_NEQ      : '!=' ;
+EXPR_LT       : '<' ;
+EXPR_LTE      : '<=' ;
+EXPR_GT       : '>' ;
+EXPR_GTE      : '>=' ;
+
 EXPR_END: '}}' -> popMode ;
 
 mode JINJA_COMMENT_MODE;
