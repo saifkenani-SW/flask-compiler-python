@@ -166,12 +166,14 @@ HTML_EQ : '=' ;
 
 // Jinja2
 TEMPLATE_JINJA_BLOCK_START: '{%' -> pushMode(JINJA_BLOCK_MODE);
-
+TEMPLATE_JINJA_EXPR_START: '{{' -> pushMode(JINJA_EXPR_MODE);
 
 mode JINJA_BLOCK_MODE;
 
 BLOCK_END: '%}' -> popMode ;
 
+mode JINJA_EXPR_MODE;
+EXPR_END: '}}' -> popMode ;
 
 
 
