@@ -229,6 +229,11 @@ EXPR_LTE      : '<=' ;
 EXPR_GT       : '>' ;
 EXPR_GTE      : '>=' ;
 
+//   Logical Operators
+EXPR_AND      : 'and' ;
+EXPR_OR       : 'or' ;
+EXPR_NOT      : 'not' ;
+
 EXPR_END: '}}' -> popMode ;
 
 mode JINJA_COMMENT_MODE;
