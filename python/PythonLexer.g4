@@ -262,6 +262,14 @@ EXPR_STRING
 //  Numbers
 EXPR_NUMBER : [0-9]+ ('.' [0-9]+)?  ;
 
+EXPR_ELLIPSIS : '...' ;
+EXPR_WALRUS   : ':=' ;
+
+
+//  Whitespace
+EXPR_WS
+    : [ \t\r\n]+ -> skip
+    ;
 EXPR_END: '}}' -> popMode ;
 
 mode JINJA_COMMENT_MODE;
