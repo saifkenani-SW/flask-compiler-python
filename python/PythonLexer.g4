@@ -193,11 +193,26 @@ BLOCK_ID: [a-zA-Z_][a-zA-Z_0-9]* ;
 BLOCK_STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'' ;
 BLOCK_NUMBER: [0-9]+ ('.' [0-9]+)? ;
 
-
-
 BLOCK_END: '%}' -> popMode ;
 
+
 mode JINJA_EXPR_MODE;
+
+//  Symbols
+EXPR_LPAREN   : '(' ;
+EXPR_RPAREN   : ')' ;
+EXPR_LBRACK   : '[' ;
+EXPR_RBRACK   : ']' ;
+EXPR_LBRACE   : '{' ;
+EXPR_RBRACE   : '}' ;
+EXPR_COMMA    : ',' ;
+EXPR_COLON    : ':' ;
+EXPR_DOT      : '.' ;
+EXPR_PIPE     : '|' ;
+EXPR_TILDE    : '~' ;
+EXPR_QUESTION : '?' ;
+
+
 EXPR_END: '}}' -> popMode ;
 
 mode JINJA_COMMENT_MODE;
