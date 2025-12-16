@@ -160,16 +160,40 @@ VOID_TAG
     | 'track'
     | 'wbr'
     ;
-
-HTML_ID : [a-zA-Z][a-zA-Z0-9-]* ;
 HTML_EQ : '=' ;
+
 
 // Jinja2
 TEMPLATE_JINJA_BLOCK_START: '{%' -> pushMode(JINJA_BLOCK_MODE);
 TEMPLATE_JINJA_EXPR_START: '{{' -> pushMode(JINJA_EXPR_MODE);
 TEMPLATE_JINJA_COMMENT_START: '{#' -> pushMode(JINJA_COMMENT_MODE);
 
+HTML_ID : [a-zA-Z][a-zA-Z0-9-]* ;
+TEMPLATE_WS: [ \t\r\n]+ -> skip ;
+
 mode JINJA_BLOCK_MODE;
+
+BLOCK_EXTENDS: 'extends' ;
+BLOCK_BLOCK: 'block' ;
+BLOCK_ENDBLOCK: 'endblock' ;
+BLOCK_IF: 'if' ;
+BLOCK_ELIF: 'elif' ;
+BLOCK_ELSE: 'else' ;
+BLOCK_ENDIF: 'endif' ;
+BLOCK_FOR: 'for' ;
+BLOCK_ENDFOR: 'endfor' ;
+BLOCK_SET: 'set' ;
+BLOCK_INCLUDE: 'include' ;
+BLOCK_IMPORT: 'import' ;
+BLOCK_FROM: 'from' ;
+BLOCK_WITH: 'with' ;
+BLOCK_ENDWITH: 'endwith' ;
+
+BLOCK_ID: [a-zA-Z_][a-zA-Z_0-9]* ;
+BLOCK_STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'' ;
+BLOCK_NUMBER: [0-9]+ ('.' [0-9]+)? ;
+
+
 
 BLOCK_END: '%}' -> popMode ;
 
