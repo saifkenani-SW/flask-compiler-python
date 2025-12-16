@@ -240,10 +240,16 @@ EXPR_IS       : 'is' ;
 EXPR_IF       : 'if' ;
 EXPR_ELSE     : 'else' ;
 
-// Boolean
+// Boo
 EXPR_TRUE     : 'true' | 'True' ;
 EXPR_FALSE    : 'false' | 'False' ;
 EXPR_NONE     : 'none' | 'None' | 'null' | 'Null' ;
+
+
+// Identifiers
+EXPR_ID
+    : [a-zA-Z_][a-zA-Z_0-9]*
+    ;
 
 EXPR_END: '}}' -> popMode ;
 
