@@ -234,6 +234,12 @@ EXPR_AND      : 'and' ;
 EXPR_OR       : 'or' ;
 EXPR_NOT      : 'not' ;
 
+//    Keywords
+EXPR_IN       : 'in' ;
+EXPR_IS       : 'is' ;
+EXPR_IF       : 'if' ;
+EXPR_ELSE     : 'else' ;
+
 EXPR_END: '}}' -> popMode ;
 
 mode JINJA_COMMENT_MODE;
