@@ -132,4 +132,26 @@ NEWLINE  : '\r'? '\n' ;
 WS       : [ \t]+ -> skip;
 COMMENT  : '#' ~[\r\n]* -> skip;
 
+
+HTML_START: '<!' [ \t\r\n>] -> pushMode(TEMPLATE_MODE);
+
+//  For TEMPLATE  (html , jinja2)
+mode TEMPLATE_MODE;
+//TEMPLATE_DOCTYPE: '<!DOCTYPE' ~[>]* '>' ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ERROR_CHAR : . ;
