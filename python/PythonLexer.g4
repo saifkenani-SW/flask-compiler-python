@@ -144,6 +144,23 @@ mode TEMPLATE_MODE;
 HTML_TAG_OPEN : '<';  // exp = < ID  (ID=ID)* > (exp | ID)*  </ID>
 HTML_TAG_CLOSE : '>';
 HTML_TAG_OPEN_SELF : '</';
+VOID_TAG
+    : 'area'
+    | 'base'
+    | 'br'
+    | 'col'
+    | 'embed'
+    | 'hr'
+    | 'img'
+    | 'input'
+    | 'link'
+    | 'meta'
+    | 'param'
+    | 'source'
+    | 'track'
+    | 'wbr'
+    ;
+
 
 
 
