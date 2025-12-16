@@ -273,8 +273,10 @@ EXPR_WS
 EXPR_END: '}}' -> popMode ;
 
 mode JINJA_COMMENT_MODE;
-
+COMMENT_TEXT: ~[#\r\n]* ;
 COMMENT_END: '#}' -> popMode ;
+
+TEMPLATE_END: '</html>' -> popMode;
 
 
 
