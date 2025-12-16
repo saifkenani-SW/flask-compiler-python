@@ -140,6 +140,10 @@ mode TEMPLATE_MODE;
 //TEMPLATE_DOCTYPE: '<!DOCTYPE' ~[>]* '>' ;
 
 
+// HTML
+HTML_TAG_OPEN : '<';  // exp = < ID  (ID=ID)* > (exp | ID)*  </ID>
+HTML_TAG_CLOSE : '>';
+HTML_TAG_OPEN_SELF : '</';
 
 
 
