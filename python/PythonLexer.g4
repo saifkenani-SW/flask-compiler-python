@@ -212,6 +212,14 @@ EXPR_PIPE     : '|' ;
 EXPR_TILDE    : '~' ;
 EXPR_QUESTION : '?' ;
 
+//   Math Operators
+EXPR_PLUS     : '+' ;
+EXPR_MINUS    : '-' ;
+EXPR_STAR     : '*' ;
+EXPR_SLASH    : '/' ;
+EXPR_PERCENT  : '%' ;
+EXPR_POWER    : '**' ;
+EXPR_FLOORDIV : '//' ;
 
 EXPR_END: '}}' -> popMode ;
 
