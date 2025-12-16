@@ -251,6 +251,14 @@ EXPR_ID
     : [a-zA-Z_][a-zA-Z_0-9]*
     ;
 
+//   Strings
+EXPR_STRING
+    : '"' (~["\\] | '\\' .)* '"'
+    | '\'' (~['\\] | '\\' .)* '\''
+    | '"""' .*? '"""'
+    | '\'\'\'' .*? '\'\'\''
+    ;
+
 EXPR_END: '}}' -> popMode ;
 
 mode JINJA_COMMENT_MODE;
