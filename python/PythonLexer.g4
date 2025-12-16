@@ -133,7 +133,13 @@ WS       : [ \t]+ -> skip;
 COMMENT  : '#' ~[\r\n]* -> skip;
 
 
-HTML_START: '<!' [ \t\r\n>] -> pushMode(TEMPLATE_MODE);
+HTML_START
+    : ( '<!' [dD][oO][cC][tT][yY][pP][eE]
+      | '<'  [hH][tT][mM][lL]
+      )
+      [ \t\r\n>]
+      -> pushMode(TEMPLATE_MODE)
+    ;
 
 //  For TEMPLATE  (html , jinja2)
 mode TEMPLATE_MODE;
@@ -141,9 +147,17 @@ mode TEMPLATE_MODE;
 
 
 // HTML
+HTML_COMMENT
+    : '<!--' .*? '-->' -> skip
+    ;
+
+HTML_TAG_OPEN_SELF : '</';
 HTML_TAG_OPEN : '<';  // exp = < ID  (ID=ID)* > (exp | ID)*  </ID>
 HTML_TAG_CLOSE : '>';
-HTML_TAG_OPEN_SELF : '</';
+HTML_STRING
+    : '"' (~["\\] | '\\' .)* '"'
+    | '\'' (~['\\] | '\\' .)* '\''
+    ;
 VOID_TAG
     : 'area'
     | 'base'
@@ -168,7 +182,11 @@ TEMPLATE_JINJA_BLOCK_START: '{%' -> pushMode(JINJA_BLOCK_MODE);
 TEMPLATE_JINJA_EXPR_START: '{{' -> pushMode(JINJA_EXPR_MODE);
 TEMPLATE_JINJA_COMMENT_START: '{#' -> pushMode(JINJA_COMMENT_MODE);
 
-HTML_ID : [a-zA-Z][a-zA-Z0-9-]* ;
+
+HTML_ID
+    : [a-zA-Z][a-zA-Z0-9-]*
+    ;
+HTML_TEXT : (~[<{"'=] | '{' ~[%#{] )+;
 TEMPLATE_WS: [ \t\r\n]+ -> skip ;
 
 mode JINJA_BLOCK_MODE;
@@ -188,10 +206,13 @@ BLOCK_IMPORT: 'import' ;
 BLOCK_FROM: 'from' ;
 BLOCK_WITH: 'with' ;
 BLOCK_ENDWITH: 'endwith' ;
+BLOCK_DOT : '.' ;
 
 BLOCK_ID: [a-zA-Z_][a-zA-Z_0-9]* ;
 BLOCK_STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'' ;
 BLOCK_NUMBER: [0-9]+ ('.' [0-9]+)? ;
+BLOCK_WS : [ \t\r\n]+ -> skip ;
+
 
 BLOCK_END: '%}' -> popMode ;
 
@@ -203,8 +224,6 @@ EXPR_LPAREN   : '(' ;
 EXPR_RPAREN   : ')' ;
 EXPR_LBRACK   : '[' ;
 EXPR_RBRACK   : ']' ;
-EXPR_LBRACE   : '{' ;
-EXPR_RBRACE   : '}' ;
 EXPR_COMMA    : ',' ;
 EXPR_COLON    : ':' ;
 EXPR_DOT      : '.' ;
@@ -220,6 +239,7 @@ EXPR_SLASH    : '/' ;
 EXPR_PERCENT  : '%' ;
 EXPR_POWER    : '**' ;
 EXPR_FLOORDIV : '//' ;
+EXPR_EQ : '=' ;
 
 //   Comparison Operators
 EXPR_EQEQ     : '==' ;
@@ -253,10 +273,8 @@ EXPR_ID
 
 //   Strings
 EXPR_STRING
-    : '"' (~["\\] | '\\' .)* '"'
-    | '\'' (~['\\] | '\\' .)* '\''
-    | '"""' .*? '"""'
-    | '\'\'\'' .*? '\'\'\''
+    : '"' (~["\\}] | '\\' .)* '"'
+    | '\'' (~['\\}] | '\\' .)* '\''
     ;
 
 //  Numbers
@@ -273,7 +291,7 @@ EXPR_WS
 EXPR_END: '}}' -> popMode ;
 
 mode JINJA_COMMENT_MODE;
-COMMENT_TEXT: ~[#\r\n]* ;
+COMMENT_TEXT : .+? ;
 COMMENT_END: '#}' -> popMode ;
 
 TEMPLATE_END: '</html>' -> popMode;
