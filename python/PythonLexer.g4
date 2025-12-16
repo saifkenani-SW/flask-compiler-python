@@ -259,6 +259,9 @@ EXPR_STRING
     | '\'\'\'' .*? '\'\'\''
     ;
 
+//  Numbers
+EXPR_NUMBER : [0-9]+ ('.' [0-9]+)?  ;
+
 EXPR_END: '}}' -> popMode ;
 
 mode JINJA_COMMENT_MODE;
