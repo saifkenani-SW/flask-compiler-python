@@ -1,4 +1,4 @@
-lexer grammar PythonLexer;
+lexer grammar FlaskTemplateLexer;
 
 @header{
 package gen;
