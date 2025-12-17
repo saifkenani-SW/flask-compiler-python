@@ -1,4 +1,4 @@
-parser grammar PythonParser;
+parser grammar FlaskTemplateParser;
 options { tokenVocab=FlaskTemplateLexer; }
 @header{
 package gen;
