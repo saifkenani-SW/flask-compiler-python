@@ -1,6 +1,6 @@
+<!DOCTYPE>
 
-
-
+<style>
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f4f4f4;
@@ -153,3 +153,4 @@ main {
     color: #6c757d;
     font-style: italic;
 }
+</style>
