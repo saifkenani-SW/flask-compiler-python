@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}تطبيق المنتجات{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+    <h1>متجر التجارة الإلكترونية المصغر</h1>
+    <nav>
+        <a href="{{ url_for('product_list') }}">عرض المنتجات</a>
+        <a href="{{ url_for('add_product') }}">إضافة منتج</a>
+    </nav>
+</header>
+
+<main>
+    {% block content %}
+    <p>محتوى افتراضي.</p>
+    {% endblock %}
+</main>
+
+<footer>
+    <p>&copy; 2025 Flask & Jinja2 App - محمد وسيم البزرة</p>
+</footer>
+</body>
+</html>
