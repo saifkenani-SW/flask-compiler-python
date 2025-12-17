@@ -307,7 +307,7 @@ CSS_TAG_WS: [ \t\r\n]+ -> skip;
 mode CSS_CONTENT_MODE;
 
 STYLE_TAG_END: '</style>' -> popMode;
-
+CSS_CONTENT_COMMENT: '/*' .*? '*/' -> skip;
 CSS_LBRACE: '{' -> pushMode(CSS_BLOCK_MODE);
 CSS_CONTENT_WS: [ \t\r\n]+ -> skip;
 
@@ -336,7 +336,6 @@ CSS_PROPERTY
     | 'z-index' | 'text-decoration' | 'font-weight' | 'resize'
     | 'text-align' | 'font-size' | 'grid-template-columns'
     | 'box-shadow' | 'flex-direction' | 'overflow'
-    | [a-zA-Z-]+
     ;
 
 CSS_SELECTOR: [^{}:;]+;
@@ -358,12 +357,13 @@ CSS_COLOR
     | '#' HEX_COLOR_LONG
     | 'rgb('  [0-9 ,]+ ')'
     | 'rgba(' [0-9 ,.]+ ')'
-    | [a-zA-Z]+
     ;
 
 // CSS Strings
 CSS_STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'';
-
+CSS_KEYWORD
+    : [a-z][a-z-]*  // فقط الكلمات بحروف صغيرة
+    ;
 // CSS Comments
 CSS_COMMENT: '/*' .*? '*/' -> skip;
 
