@@ -1,0 +1,37 @@
+def main_function(x):
+    # Level 1: Function Body
+    result = x * 2
+    if x > 5:
+        # Level 2: First IF block
+        while True:
+            # Level 3: WHILE block
+            if result > 10:
+                # Level 4: Second IF block
+                def inner_calc(y):
+                    # Level 5: Nested Function
+                    return y + 100
+
+                final = inner_calc(result)
+                print(final)
+                break
+            # End Level 4
+            result = result - 1
+            if result > 0:
+                break
+            # End Level 3
+        # End Level 2
+
+    else:
+        # Level 2: ELSE block
+        for i in range(3):
+            # Level 3: FOR block
+            if i == 2:
+                # Level 4: Third IF block
+                return 0
+            # End Level 4
+            print(i)
+        # End Level 3
+    # End Level 1
+    return result
+
+main_function(15)
