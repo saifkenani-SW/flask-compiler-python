@@ -132,4 +132,179 @@ NEWLINE  : '\r'? '\n' ;
 WS       : [ \t]+ -> skip;
 COMMENT  : '#' ~[\r\n]* -> skip;
 
+
+HTML_START
+    : ( '<!' [dD][oO][cC][tT][yY][pP][eE]
+      | '<'  [hH][tT][mM][lL]
+      )
+      [ \t\r\n>]
+      -> pushMode(TEMPLATE_MODE)
+    ;
+
+//  For TEMPLATE  (html , jinja2)
+mode TEMPLATE_MODE;
+//TEMPLATE_DOCTYPE: '<!DOCTYPE' ~[>]* '>' ;
+
+
+// HTML
+HTML_COMMENT
+    : '<!--' .*? '-->' -> skip
+    ;
+
+HTML_TAG_OPEN_SELF : '</';
+HTML_TAG_OPEN : '<';  // exp = < ID  (ID=ID)* > (exp | ID)*  </ID>
+HTML_TAG_CLOSE : '>';
+HTML_STRING
+    : '"' (~["\\] | '\\' .)* '"'
+    | '\'' (~['\\] | '\\' .)* '\''
+    ;
+VOID_TAG
+    : 'area'
+    | 'base'
+    | 'br'
+    | 'col'
+    | 'embed'
+    | 'hr'
+    | 'img'
+    | 'input'
+    | 'link'
+    | 'meta'
+    | 'param'
+    | 'source'
+    | 'track'
+    | 'wbr'
+    ;
+HTML_EQ : '=' ;
+
+
+// Jinja2
+TEMPLATE_JINJA_BLOCK_START: '{%' -> pushMode(JINJA_BLOCK_MODE);
+TEMPLATE_JINJA_EXPR_START: '{{' -> pushMode(JINJA_EXPR_MODE);
+TEMPLATE_JINJA_COMMENT_START: '{#' -> pushMode(JINJA_COMMENT_MODE);
+
+
+HTML_ID
+    : [a-zA-Z][a-zA-Z0-9-]*
+    ;
+HTML_TEXT : (~[<{"'=] | '{' ~[%#{] )+;
+TEMPLATE_WS: [ \t\r\n]+ -> skip ;
+
+mode JINJA_BLOCK_MODE;
+
+BLOCK_EXTENDS: 'extends' ;
+BLOCK_BLOCK: 'block' ;
+BLOCK_ENDBLOCK: 'endblock' ;
+BLOCK_IF: 'if' ;
+BLOCK_ELIF: 'elif' ;
+BLOCK_ELSE: 'else' ;
+BLOCK_ENDIF: 'endif' ;
+BLOCK_FOR: 'for' ;
+BLOCK_ENDFOR: 'endfor' ;
+BLOCK_SET: 'set' ;
+BLOCK_INCLUDE: 'include' ;
+BLOCK_IMPORT: 'import' ;
+BLOCK_FROM: 'from' ;
+BLOCK_WITH: 'with' ;
+BLOCK_ENDWITH: 'endwith' ;
+BLOCK_DOT : '.' ;
+
+BLOCK_ID: [a-zA-Z_][a-zA-Z_0-9]* ;
+BLOCK_STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'' ;
+BLOCK_NUMBER: [0-9]+ ('.' [0-9]+)? ;
+BLOCK_WS : [ \t\r\n]+ -> skip ;
+
+
+BLOCK_END: '%}' -> popMode ;
+
+
+mode JINJA_EXPR_MODE;
+
+//  Symbols
+EXPR_LPAREN   : '(' ;
+EXPR_RPAREN   : ')' ;
+EXPR_LBRACK   : '[' ;
+EXPR_RBRACK   : ']' ;
+EXPR_COMMA    : ',' ;
+EXPR_COLON    : ':' ;
+EXPR_DOT      : '.' ;
+EXPR_PIPE     : '|' ;
+EXPR_TILDE    : '~' ;
+EXPR_QUESTION : '?' ;
+
+//   Math Operators
+EXPR_PLUS     : '+' ;
+EXPR_MINUS    : '-' ;
+EXPR_STAR     : '*' ;
+EXPR_SLASH    : '/' ;
+EXPR_PERCENT  : '%' ;
+EXPR_POWER    : '**' ;
+EXPR_FLOORDIV : '//' ;
+EXPR_EQ : '=' ;
+
+//   Comparison Operators
+EXPR_EQEQ     : '==' ;
+EXPR_NEQ      : '!=' ;
+EXPR_LT       : '<' ;
+EXPR_LTE      : '<=' ;
+EXPR_GT       : '>' ;
+EXPR_GTE      : '>=' ;
+
+//   Logical Operators
+EXPR_AND      : 'and' ;
+EXPR_OR       : 'or' ;
+EXPR_NOT      : 'not' ;
+
+//    Keywords
+EXPR_IN       : 'in' ;
+EXPR_IS       : 'is' ;
+EXPR_IF       : 'if' ;
+EXPR_ELSE     : 'else' ;
+
+// Boo
+EXPR_TRUE     : 'true' | 'True' ;
+EXPR_FALSE    : 'false' | 'False' ;
+EXPR_NONE     : 'none' | 'None' | 'null' | 'Null' ;
+
+
+// Identifiers
+EXPR_ID
+    : [a-zA-Z_][a-zA-Z_0-9]*
+    ;
+
+//   Strings
+EXPR_STRING
+    : '"' (~["\\}] | '\\' .)* '"'
+    | '\'' (~['\\}] | '\\' .)* '\''
+    ;
+
+//  Numbers
+EXPR_NUMBER : [0-9]+ ('.' [0-9]+)?  ;
+
+EXPR_ELLIPSIS : '...' ;
+EXPR_WALRUS   : ':=' ;
+
+
+//  Whitespace
+EXPR_WS
+    : [ \t\r\n]+ -> skip
+    ;
+EXPR_END: '}}' -> popMode ;
+
+mode JINJA_COMMENT_MODE;
+COMMENT_TEXT : .+? ;
+COMMENT_END: '#}' -> popMode ;
+
+TEMPLATE_END: '</html>' -> popMode;
+
+
+
+
+
+
+
+
+
+
+
+
 ERROR_CHAR : . ;
