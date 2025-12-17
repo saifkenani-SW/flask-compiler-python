@@ -1,0 +1,55 @@
+# Level 0: Global Scope
+
+def outer_function():
+    # Level 1: Outer Function (indent 4)
+    x = 1
+
+    if x == 1:
+        # Level 2: IF (indent 8)
+        while x < 10:
+            # Level 3: WHILE (indent 12)
+            if x > 5:
+                # Level 4: IF (indent 16)
+                for i in range(1):
+                    # Level 5: FOR (indent 20)
+                    def nested_func():
+                        # Level 6: Nested DEF (indent 24)
+                        if True:
+                            # Level 7: IF (indent 28)
+                            x = x + 1
+                            if x == 7:
+                                # Level 8: IF (indent 32)
+                                while True:
+                                    # Level 9: WHILE (indent 36)
+                                    if x > 9:
+                                        # Level 10: Deepest IF (indent 40)
+                                        break  # DEDENT 10
+                                    # End Level 10 (DEDENT 9)
+                                    x = x + 1
+                                # End Level 9 (DEDENT 8)
+                                return "Max Depth Reached" # DEDENT 7
+                            # End Level 8 (DEDENT 6)
+                        # End Level 7 (DEDENT 5)
+                        return x # DEDENT 4
+                    # End Level 6 (DEDENT 3)
+
+                    if nested_func() > 5:
+                        break # DEDENT 2
+                    # End Level 5 (DEDENT 1)
+
+                # End Level 4
+
+            # End Level 3
+            if x == 10:
+                break
+
+        # End Level 2
+
+    else:
+        # Level 2: ELSE (indent 8)
+        print("Done")
+
+    # End Level 1
+    return x
+
+outer_function()

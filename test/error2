@@ -1,0 +1,11 @@
+# test_error2.py
+# أخطاء في السلاسل النصية
+bad_string1 = 'unclosed string  # ❌ سلسلة غير مغلقة
+bad_string2 = "another unclosed  # ❌ سلسلة غير مغلقة
+
+# أخطاء في الأرقام
+bad_number = 12.  # ❌ نقطة بدون أرقام
+bad_hex = 0xGH  # ❌ أحرف غير سداسية عشرية
+
+# رموز غير معروفة
+unknown_symbol = @@@  # ❌ @@@ غير معروف

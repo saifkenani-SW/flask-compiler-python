@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <!-- HTML Comment -->
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+            {{ page_title }}
+        {% endblock %}
+    </title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header>
+    <h1>{{ site_name }}</h1>
+
+    {# Jinja Comment #}
+    <nav>
+        <a href="{{ url_for('home') }}">الرئيسية</a>
+        <a href="{{ url_for('products') }}">المنتجات</a>
+        <a href="{{ url_for('contact') }}">تواصل معنا</a>
+    </nav>
+</header>
+
+<main>
+
+    {% if products %}
+        <ul class="product-list">
+            {% for product in products %}
+                <li class="product-item">
+                    <h2>{{ product.name }}</h2>
+                    <p>السعر: {{ product.price }} $</p>
+
+                    <img
+                        src="{{ product.image_url }}"
+                        alt="صورة {{ product.name }}"
+                        loading="lazy"
+                    />
+
+                    {% if product.in_stock %}
+                        <span class="in-stock">متوفر</span>
+                    {% else %}
+                        <span class="out-of-stock">غير متوفر</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>لا توجد منتجات حالياً.</p>
+    {% endif %}
+
+</main>
+
+<footer>
+    <p>&copy; {{ current_year }} – {{ site_name }}</p>
+</footer>
+
+</body>
+</html>

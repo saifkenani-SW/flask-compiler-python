@@ -1,4 +1,4 @@
-lexer grammar PythonLexer;
+lexer grammar FlaskTemplateLexer;
 
 @header{
 package gen;
@@ -133,31 +133,38 @@ WS       : [ \t]+ -> skip;
 COMMENT  : '#' ~[\r\n]* -> skip;
 
 
-HTML_START
-    : ( '<!' [dD][oO][cC][tT][yY][pP][eE]
-      | '<'  [hH][tT][mM][lL]
-      )
-      [ \t\r\n>]
-      -> pushMode(TEMPLATE_MODE)
-    ;
+HTML_DOCTYPE: '<!' [dD][oO][cC][tT][yY][pP][eE] .*? '>'
+    -> pushMode(TEMPLATE_MODE);
 
 //  For TEMPLATE  (html , jinja2)
 mode TEMPLATE_MODE;
-//TEMPLATE_DOCTYPE: '<!DOCTYPE' ~[>]* '>' ;
-
-
-// HTML
 HTML_COMMENT
     : '<!--' .*? '-->' -> skip
     ;
 
-HTML_TAG_OPEN_SELF : '</';
-HTML_TAG_OPEN : '<';  // exp = < ID  (ID=ID)* > (exp | ID)*  </ID>
-HTML_TAG_CLOSE : '>';
-HTML_STRING
-    : '"' (~["\\] | '\\' .)* '"'
-    | '\'' (~['\\] | '\\' .)* '\''
-    ;
+// Jinja2
+TEMPLATE_JINJA_BLOCK_START: '{%' -> pushMode(JINJA_BLOCK_MODE);
+TEMPLATE_JINJA_EXPR_START: '{{' -> pushMode(JINJA_EXPR_MODE);
+TEMPLATE_JINJA_COMMENT_START: '{#' -> pushMode(JINJA_COMMENT_MODE);
+
+// CSS
+CSS_START:'<style' -> pushMode(CSS_TAG_MODE);
+
+
+
+
+// HTML
+HTML_TAG_OPEN_SELF: '</' -> pushMode(TAG_MODE);
+HTML_TAG_OPEN: '<' -> pushMode(TAG_MODE);
+TEMPLATE_WS: [ \t\r\n]+ -> skip;
+
+HTML_TEXT: (~[<{] | '{' ~[%#{])+;
+TEMPLATE_END: '</html>' -> popMode;
+
+mode TAG_MODE;
+TAG_CLOSE: '>' -> popMode;
+SELF_CLOSE_TAG: '/>' -> popMode;
+HTML_EQ : '=' ;
 VOID_TAG
     : 'area'
     | 'base'
@@ -174,20 +181,12 @@ VOID_TAG
     | 'track'
     | 'wbr'
     ;
-HTML_EQ : '=' ;
-
-
-// Jinja2
-TEMPLATE_JINJA_BLOCK_START: '{%' -> pushMode(JINJA_BLOCK_MODE);
-TEMPLATE_JINJA_EXPR_START: '{{' -> pushMode(JINJA_EXPR_MODE);
-TEMPLATE_JINJA_COMMENT_START: '{#' -> pushMode(JINJA_COMMENT_MODE);
-
-
 HTML_ID
     : [a-zA-Z][a-zA-Z0-9-]*
     ;
-HTML_TEXT : (~[<{"'=] | '{' ~[%#{] )+;
-TEMPLATE_WS: [ \t\r\n]+ -> skip ;
+HTML_STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'';
+
+HTML_WS: [ \t\r\n]+ -> skip;
 
 mode JINJA_BLOCK_MODE;
 
@@ -294,13 +293,85 @@ mode JINJA_COMMENT_MODE;
 COMMENT_TEXT : .+? ;
 COMMENT_END: '#}' -> popMode ;
 
-TEMPLATE_END: '</html>' -> popMode;
+
+mode CSS_TAG_MODE;
+
+CSS_TAG_CLOSE: '>' -> mode(CSS_CONTENT_MODE);
+
+CSS_TAG_ATTR: [a-zA-Z][a-zA-Z0-9-]*;
+CSS_TAG_EQ: '=';
+CSS_TAG_STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'';
+
+CSS_TAG_WS: [ \t\r\n]+ -> skip;
+
+mode CSS_CONTENT_MODE;
+
+STYLE_TAG_END: '</style>' -> popMode;
+
+CSS_LBRACE: '{' -> pushMode(CSS_BLOCK_MODE);
+CSS_CONTENT_WS: [ \t\r\n]+ -> skip;
+
+CSS_CONTENT: (~[<{ \t\r\n] | '<' ~[/{ \t\r\n] | '</' ~[sS{ \t\r\n])+;
+
+
+
+mode CSS_BLOCK_MODE;
+// CSS Braces
+CSS_RBRACE: '}' -> popMode;
+CSS_COLON: ':';
+CSS_SEMICOLON: ';';
+CSS_COMMA: ',';
+CSS_DOT: '.';
+
+
+// CSS Properties
+CSS_PROPERTY
+    : 'display' | 'margin' | 'font-family' | 'padding' | 'width'
+    | 'border-right' | 'overflow-y' | 'border' | 'cursor'
+    | 'transition' | 'height' | 'margin-right' | 'border-solid'
+    | 'color' | 'background' | 'background-color' | 'border-radius'
+    | 'gap' | 'border-bottom-color' | 'margin-bottom' | 'top'
+    | 'left' | 'position' | 'justify-content' | 'align-items'
+    | 'max-width' | 'box-sizing' | 'margin-top' | 'object-fit'
+    | 'z-index' | 'text-decoration' | 'font-weight' | 'resize'
+    | 'text-align' | 'font-size' | 'grid-template-columns'
+    | 'box-shadow' | 'flex-direction' | 'overflow'
+    | [a-zA-Z-]+
+    ;
+
+CSS_SELECTOR: [^{}:;]+;
 
 
 
 
+CSS_ATTR_SELECTOR: '[' [a-zA-Z-]+ '=' CSS_STRING ']';
+
+CSS_NUMERIC: [0-9]+ ('.' [0-9]+)? (('px'|'em'|'rem'|'%'|'vh'|'vw')?);
+
+fragment HEX_DIGIT : [0-9a-fA-F] ;
+fragment HEX_COLOR_SHORT : HEX_DIGIT HEX_DIGIT HEX_DIGIT ;
+fragment HEX_COLOR_LONG  : HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT ;
 
 
+CSS_COLOR
+    : '#' HEX_COLOR_SHORT
+    | '#' HEX_COLOR_LONG
+    | 'rgb('  [0-9 ,]+ ')'
+    | 'rgba(' [0-9 ,.]+ ')'
+    | [a-zA-Z]+
+    ;
+
+// CSS Strings
+CSS_STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'';
+
+// CSS Comments
+CSS_COMMENT: '/*' .*? '*/' -> skip;
+
+// CSS Whitespace
+CSS_BLOCK_WS: [ \t\r\n]+ -> skip;
+
+// CSS Values
+CSS_VALUE: [^};{]+;
 
 
 
