@@ -184,9 +184,25 @@ VOID_TAG
 HTML_ID
     : [a-zA-Z][a-zA-Z0-9-]*
     ;
-HTML_STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'';
-
+//HTML_STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'';
+HTML_QUOTE: '"' -> pushMode(HTML_ATTR_VALUE_MODE);
+HTML_APOSTROPHE: '\'' -> pushMode(HTML_ATTR_VALUE_MODE);
 HTML_WS: [ \t\r\n]+ -> skip;
+
+mode HTML_ATTR_VALUE_MODE;
+ATTR_VALUE_QUOTE: '"' -> popMode;
+ATTR_VALUE_APOSTROPHE: '\'' -> popMode;
+
+// jinja2 nested html
+ATTR_JINJA_EXPR_START: '{{' -> pushMode(JINJA_EXPR_MODE);
+ATTR_JINJA_BLOCK_START: '{%' -> pushMode(JINJA_BLOCK_MODE);
+ATTR_JINJA_COMMENT_START: '{#' -> pushMode(JINJA_COMMENT_MODE);
+ATTR_VALUE_ESCAPE: '\\' .;
+ATTR_VALUE_ID
+    : ~["'\\{]+
+    ;
+
+HTML_ATTR_VALUE_WS: [ \t\r\n]+ -> skip;
 
 mode JINJA_BLOCK_MODE;
 
@@ -332,10 +348,10 @@ CSS_PROPERTY
     | 'color' | 'background' | 'background-color' | 'border-radius'
     | 'gap' | 'border-bottom-color' | 'margin-bottom' | 'top'
     | 'left' | 'position' | 'justify-content' | 'align-items'
-    | 'max-width' | 'box-sizing' | 'margin-top' | 'object-fit'
-    | 'z-index' | 'text-decoration' | 'font-weight' | 'resize'
-    | 'text-align' | 'font-size' | 'grid-template-columns'
-    | 'box-shadow' | 'flex-direction' | 'overflow'
+    | 'max-width' | 'box-sizing' | 'margin-top' | 'object-fit'|'font-style'
+    | 'z-index' | 'text-decoration' | 'font-weight' | 'resize'|'padding-right'
+    | 'text-align' | 'font-size' | 'grid-template-columns'|'max-height'
+    | 'box-shadow' | 'flex-direction' | 'overflow'|'direction'|'flex-wrap'
     ;
 
 CSS_SELECTOR: [^{}:;]+;
