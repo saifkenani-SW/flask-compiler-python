@@ -1,125 +1,105 @@
 parser grammar TemplateParser;
 
-options { tokenVocab=TemplateLexer; }
+options { tokenVocab = TemplateLexer; }
 
-
-document
-  : block EOF
+/* ===================== ROOT ===================== */
+template
+  : templateElement* EOF
   ;
 
-block
-  : node*
-  ;
-
-node
-  : htmlElement
+templateElement
+  : cssBlock
+  | htmlElement
   | jinjaPrint
-  | jinjaStmt
-  | cssBlock
-  | TEXT
+  | jinjaSetStmt
+  | jinjaIfBlock
+  | jinjaForBlock
+  | HTML_TEXT
+  | NEWLINE
   ;
 
+/* ===================== HTML ===================== */
+/* <tag> ... </tag> */
 htmlElement
-  : openTag htmlContent closeTag
+  : LT TAG_NAME TAG_CLOSE
+      templateElement*
+    LT_SLASH TAG_NAME TAG_CLOSE
   ;
 
-openTag
-  : LT NAME GT
-  ;
-
-closeTag
-  : LT_SLASH NAME GT
-  ;
-
-
-htmlContent
-  : ( {self._input.LA(1) != self.LT_SLASH}? htmlNode )*
-  ;
-
-htmlNode
-  : htmlElement
-  | jinjaPrint
-  | jinjaStmt
-  | TEXT
-  ;
-
-
+/* ===================== JINJA PRINT ===================== */
 jinjaPrint
-  : JPRINT_OPEN expr JPRINT_CLOSE
+  : JPRINT_OPEN exprPrint JPRINT_CLOSE
   ;
 
-
-jinjaStmt
-  : jinjaIf
-  | jinjaFor
-  | jinjaSet
+exprPrint
+  : EXPR_ID
+  | EXPR_NUMBER
+  | EXPR_STRING
   ;
 
-jinjaIf
-  : JSTMT_OPEN IF expr JSTMT_CLOSE
-    block
-    JSTMT_OPEN ENDIF JSTMT_CLOSE
+/* ===================== JINJA SET ===================== */
+/* {% set age = 20 %} */
+jinjaSetStmt
+  : JSTMT_OPEN BLOCK_SET BLOCK_ID BLOCK_EQ blockExpr JSTMT_CLOSE
   ;
 
-jinjaFor
-  : JSTMT_OPEN FOR NAME IN expr JSTMT_CLOSE
-    block
-    JSTMT_OPEN ENDFOR JSTMT_CLOSE
+/* ===================== JINJA IF BLOCK ===================== */
+/* {% if age >= 18 %} ... {% endif %} */
+jinjaIfBlock
+  : JSTMT_OPEN BLOCK_IF blockExpr JSTMT_CLOSE
+      templateElement*
+    JSTMT_OPEN BLOCK_ENDIF JSTMT_CLOSE
   ;
 
-jinjaSet
-  : JSTMT_OPEN SET NAME ASSIGN expr JSTMT_CLOSE
+/* ===================== JINJA FOR BLOCK ===================== */
+/* {% for x in y %} ... {% endfor %} */
+jinjaForBlock
+  : JSTMT_OPEN BLOCK_FOR BLOCK_ID BLOCK_IN blockExpr JSTMT_CLOSE
+      templateElement*
+    JSTMT_OPEN BLOCK_ENDFOR JSTMT_CLOSE
   ;
 
+/* ===================== BLOCK EXPRESSIONS (inside {% %}) ===================== */
+blockExpr
+  : blockRel
+  ;
 
+blockRel
+  : blockAtom ( (BLOCK_EQEQ | BLOCK_NEQ | BLOCK_LT | BLOCK_GT | BLOCK_LTE | BLOCK_GTE) blockAtom )?
+  ;
+
+blockAtom
+  : BLOCK_ID
+  | BLOCK_NUMBER
+  | BLOCK_STRING
+  | BLOCK_TRUE
+  | BLOCK_FALSE
+  | BLOCK_NONE
+  ;
+
+/* ===================== CSS ===================== */
+/* {% css %} ... {% endcss %} */
 cssBlock
-  : CSS_BLOCK_START
-    cssRule*
-    CSS_BLOCK_END
+  : CSS_BLOCK_START cssRule* CSS_BLOCK_END_INNER
   ;
 
 cssRule
-  : selector LBRACE cssDecl* RBRACE
+  : cssSelector CSS_LBRACE cssDeclaration* CSS_RBRACE
   ;
 
-selector
-  : DOT NAME
-  | HASH NAME
-  | NAME
+cssSelector
+  : (CSS_DOT | CSS_HASH)? CSS_NAME
   ;
 
-cssDecl
-  : cssProp COLON cssValue SEMI
+/* color / font-size / ... */
+cssDeclaration
+  : cssProp CSS_COLON cssValue CSS_SEMI
   ;
 
 cssProp
-  : NAME (MINUS NAME)*
+  : CSS_NAME (CSS_MINUS CSS_NAME)*
   ;
 
 cssValue
-  : NUMBER NAME?   // 20px أو 20
-  | NAME
-  | STRING
-  ;
-
-
-expr : orExpr ;
-
-orExpr  : andExpr (OR andExpr)* ;
-andExpr : eqExpr (AND eqExpr)* ;
-eqExpr  : relExpr ((EQ | NEQ) relExpr)* ;
-relExpr : addExpr ((LT_OP | GT_OP | LE | GE) addExpr)* ;
-addExpr : mulExpr ((PLUS | MINUS) mulExpr)* ;
-mulExpr : unaryExpr ((STAR | DIV) unaryExpr)* ;
-
-unaryExpr
-  : (NOT | MINUS) unaryExpr
-  | primary
-  ;
-
-primary
-  : NUMBER
-  | STRING
-  | NAME
-  | LPAREN expr RPAREN
+  : (CSS_NAME | CSS_NUMBER | CSS_STRING)+
   ;

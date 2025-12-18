@@ -1,184 +1,201 @@
 lexer grammar TemplateLexer;
 
-tokens {
-  JPRINT_OPEN, JPRINT_CLOSE,
-  JSTMT_OPEN, JSTMT_CLOSE,
-  CSS_BLOCK_START, CSS_BLOCK_END,
-
-  LT, LT_SLASH, GT, SLASH,
-
-  IF, ENDIF, FOR, ENDFOR, IN, SET,
-
-  ASSIGN, EQ, NEQ, LE, GE, LT_OP, GT_OP,
-  PLUS, MINUS, STAR, DIV, NOT, AND, OR,
-
-  LBRACE, RBRACE, COLON, SEMI, DOT, HASH,
-  LPAREN, RPAREN,
-
-  NAME, NUMBER, STRING,
-  TEXT
-}
+/* =========================
+   Helpers
+========================= */
+fragment WS_CH    : [ \t]+ ;
+fragment NL_CH    : '\r'? '\n' ;
 
 fragment ID_START : [a-zA-Z_] ;
-fragment ID_CONT  : [a-zA-Z0-9_.$-] ;
-fragment ID       : ID_START ID_CONT* ;
+fragment ID_CONT  : [a-zA-Z0-9_]* ;
+fragment ID       : ID_START ID_CONT ;
 
-fragment DIGIT    : [0-9] ;
-fragment NUM      : DIGIT+ ('.' DIGIT+)? ;
+fragment NUM      : [0-9]+ ('.' [0-9]+)? ;
 
-fragment STR_DQ   : '"' (~["\\] | '\\' .)* '"' ;
-fragment STR_SQ   : '\'' (~['\\] | '\\' .)* '\'' ;
+fragment STR_DQ   : '"'  ( ~["\\\r\n] | '\\' . )* '"' ;
+fragment STR_SQ   : '\'' ( ~['\\\r\n] | '\\' . )* '\'' ;
 fragment STR      : STR_DQ | STR_SQ ;
 
-fragment WS_CH    : [ \t\r\n]+ ;
+/* =========================
+   TEMPLATE (DEFAULT) MODE
+========================= */
 
-
-JPRINT_OPEN_R
-  : '{{' -> type(JPRINT_OPEN), pushMode(JINJA_EXPR)
+/* --- CSS block start: {% css %} --- */
+CSS_BLOCK_START
+  : '{%' WS_CH* 'css' WS_CH* '%}' -> pushMode(CSS_MODE)
   ;
 
-
-CSS_BLOCK_START_R
-  : '{%' WS_CH* 'css' WS_CH* '%}'
-    -> type(CSS_BLOCK_START), pushMode(CSS_MODE)
+/* --- Jinja statement start: {% ... %} --- */
+JSTMT_OPEN
+  : '{%' -> pushMode(JINJA_BLOCK_MODE)
   ;
 
-
-JSTMT_OPEN_R
-  : '{%' -> type(JSTMT_OPEN), pushMode(JINJA_STMT)
+/* --- Jinja print start: {{ ... }} --- */
+JPRINT_OPEN
+  : '{{' -> pushMode(JINJA_EXPR_MODE)
   ;
 
-
-LT_SLASH_R
-  : '</' -> type(LT_SLASH), pushMode(HTML_TAG)
+/* --- HTML tags: < ... > and </ ... > --- */
+LT_SLASH
+  : '</' -> pushMode(TAG_MODE)
   ;
 
-
-LT_R
-  : '<' -> type(LT), pushMode(HTML_TAG)
+LT
+  : '<'  -> pushMode(TAG_MODE)
   ;
 
-
-TEXT_R
-  : ( ~[<{] | '{' ~[{%] )+ -> type(TEXT)
+/* --- New lines as tokens (helpful for parser output readability) --- */
+NEWLINE
+  : NL_CH
   ;
 
-WS_R : WS_CH -> skip ;
-
-
-mode HTML_TAG;
-
-TAG_WS : WS_CH -> skip ;
-
-GT_R    : '>' -> type(GT), popMode ;
-SLASH_R : '/' -> type(SLASH) ;
-
-NAME_TAG
-  : ID -> type(NAME)
+/* --- Any other plain text (outside tags/jinja/css) --- */
+HTML_TEXT
+  : (~[<{ \r\n] | '{' ~[%#{])+    // stop at < or { or newline
   ;
 
-ERR_TAG : . -> skip ;
-
-
-mode JINJA_EXPR;
-
-JPRINT_CLOSE_R
-  : '}}' -> type(JPRINT_CLOSE), popMode
+/* --- skip spaces/tabs in template body --- */
+TEMPLATE_WS
+  : WS_CH -> skip
   ;
 
-EXPR_WS : WS_CH -> skip ;
+/* =========================
+   TAG MODE  (after < or </)
+========================= */
+mode TAG_MODE;
 
-LPAREN_R : '(' -> type(LPAREN) ;
-RPAREN_R : ')' -> type(RPAREN) ;
-
-EQ_R   : '==' -> type(EQ) ;
-NEQ_R  : '!=' -> type(NEQ) ;
-LE_R   : '<=' -> type(LE) ;
-GE_R   : '>=' -> type(GE) ;
-LTOP_R : '<'  -> type(LT_OP) ;
-GTOP_R : '>'  -> type(GT_OP) ;
-
-PLUS_R  : '+' -> type(PLUS) ;
-MINUS_R : '-' -> type(MINUS) ;
-STAR_R  : '*' -> type(STAR) ;
-DIV_R   : '/' -> type(DIV) ;
-
-NOT_R : 'not' -> type(NOT) ;
-AND_R : 'and' -> type(AND) ;
-OR_R  : 'or'  -> type(OR) ;
-
-NUMBER_R : NUM -> type(NUMBER) ;
-STRING_R : STR -> type(STRING) ;
-NAME_R   : ID  -> type(NAME) ;
-
-ERR_EXPR : . -> skip ;
-
-
-mode JINJA_STMT;
-
-JSTMT_CLOSE_R
-  : '%}' -> type(JSTMT_CLOSE), popMode
+TAG_CLOSE
+  : '>' -> popMode
   ;
 
-STMT_WS : WS_CH -> skip ;
+SELF_CLOSE_TAG
+  : '/>' -> popMode
+  ;
 
-/* Keywords */
-IF_R     : 'if'     -> type(IF) ;
-ENDIF_R  : 'endif'  -> type(ENDIF) ;
-FOR_R    : 'for'    -> type(FOR) ;
-ENDFOR_R : 'endfor' -> type(ENDFOR) ;
-IN_R     : 'in'     -> type(IN) ;
-SET_R    : 'set'    -> type(SET) ;
+HTML_EQ
+  : '='
+  ;
 
-//exp
-ASSIGN_R : '=' -> type(ASSIGN) ;
+TAG_NAME
+  : [a-zA-Z][a-zA-Z0-9-]*
+  ;
 
-EQ_S  : '==' -> type(EQ) ;
-NEQ_S : '!=' -> type(NEQ) ;
-LE_S  : '<=' -> type(LE) ;
-GE_S  : '>=' -> type(GE) ;
-LT_S  : '<'  -> type(LT_OP) ;
-GT_S  : '>'  -> type(GT_OP) ;
+TAG_WS
+  : [ \t\r\n]+ -> skip
+  ;
 
-PLUS_S  : '+' -> type(PLUS) ;
-MINUS_S : '-' -> type(MINUS) ;
-STAR_S  : '*' -> type(STAR) ;
-DIV_S   : '/' -> type(DIV) ;
+TAG_STRING
+  : STR
+  ;
 
-NOT_S : 'not' -> type(NOT) ;
-AND_S : 'and' -> type(AND) ;
-OR_S  : 'or'  -> type(OR) ;
+TAG_OTHER
+  : . -> skip
+  ;
 
-LP_S : '(' -> type(LPAREN) ;
-RP_S : ')' -> type(RPAREN) ;
+/* =========================
+   JINJA EXPR MODE  {{ ... }}
+========================= */
+mode JINJA_EXPR_MODE;
 
-NUMBER_S : NUM -> type(NUMBER) ;
-STRING_S : STR -> type(STRING) ;
-NAME_S   : ID  -> type(NAME) ;
+JPRINT_CLOSE
+  : '}}' -> popMode
+  ;
 
-ERR_STMT : . -> skip ;
+EXPR_WS
+  : [ \t\r\n]+ -> skip
+  ;
 
-//CSS
+EXPR_NUMBER
+  : NUM
+  ;
+
+EXPR_STRING
+  : STR
+  ;
+
+EXPR_ID
+  : [a-zA-Z_][a-zA-Z0-9_]*
+  ;
+
+EXPR_OP
+  : . -> skip
+  ;
+
+/* =========================
+   JINJA BLOCK MODE  {% ... %}
+========================= */
+mode JINJA_BLOCK_MODE;
+
+JSTMT_CLOSE
+  : '%}' -> popMode
+  ;
+
+BLOCK_WS
+  : [ \t\r\n]+ -> skip
+  ;
+
+/* keywords */
+BLOCK_IF     : 'if' ;
+BLOCK_ELIF   : 'elif' ;
+BLOCK_ELSE   : 'else' ;
+BLOCK_ENDIF  : 'endif' ;
+
+BLOCK_FOR    : 'for' ;
+BLOCK_IN     : 'in' ;
+BLOCK_ENDFOR : 'endfor' ;
+
+BLOCK_SET    : 'set' ;
+
+/* literals */
+BLOCK_TRUE  : 'True' ;
+BLOCK_FALSE : 'False' ;
+BLOCK_NONE  : 'None' ;
+
+/* operators */
+BLOCK_EQ    : '=' ;
+
+BLOCK_EQEQ  : '==' ;
+BLOCK_NEQ   : '!=' ;
+BLOCK_LTE   : '<=' ;
+BLOCK_GTE   : '>=' ;
+BLOCK_LT    : '<' ;
+BLOCK_GT    : '>' ;
+
+/* values */
+BLOCK_NUMBER : NUM ;
+BLOCK_STRING : STR ;
+BLOCK_ID     : [a-zA-Z_][a-zA-Z0-9_]* ;
+
+BLOCK_OTHER
+  : . -> skip
+  ;
+
+/* =========================
+   CSS MODE (between {% css %} ... {% endcss %})
+========================= */
 mode CSS_MODE;
 
-CSS_BLOCK_END_R
-  : '{%' WS_CH* 'endcss' WS_CH* '%}'
-    -> type(CSS_BLOCK_END), popMode
+/* endcss */
+CSS_BLOCK_END_INNER
+  : '{%' WS_CH* 'endcss' WS_CH* '%}' -> popMode
   ;
 
-CSS_WS : WS_CH -> skip ;
+CSS_WS
+  : [ \t\r\n]+ -> skip
+  ;
 
-DOT_R    : '.' -> type(DOT) ;
-HASH_R   : '#' -> type(HASH) ;
-LBRACE_R : '{' -> type(LBRACE) ;
-RBRACE_R : '}' -> type(RBRACE) ;
-COLON_R  : ':' -> type(COLON) ;
-SEMI_R   : ';' -> type(SEMI) ;
+CSS_DOT    : '.' ;
+CSS_HASH   : '#' ;
+CSS_LBRACE : '{' ;
+CSS_RBRACE : '}' ;
+CSS_COLON  : ':' ;
+CSS_SEMI   : ';' ;
+CSS_MINUS  : '-' ;
 
-DASH_R : '-' -> type(MINUS) ;
+CSS_NUMBER : NUM ;
+CSS_STRING : STR ;
+CSS_NAME   : [a-zA-Z_][a-zA-Z0-9_]* ;
 
-NUMBER_C : NUM -> type(NUMBER) ;
-STRING_C : STR -> type(STRING) ;
-NAME_C   : ID  -> type(NAME) ;
-
-ERR_CSS : . -> skip ;
+CSS_OTHER
+  : . -> skip
+  ;
