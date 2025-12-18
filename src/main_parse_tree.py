@@ -8,7 +8,7 @@ def main():
     stream = CommonTokenStream(lexer)
 
     parser = TemplateParser(stream)
-    tree = parser.template()  # ✅ قاعدة البداية
+    tree = parser.template()
 
     print(tree.toStringTree(recog=parser))
 
