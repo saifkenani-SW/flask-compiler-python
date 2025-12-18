@@ -1,16 +1,15 @@
-from antlr4 import InputStream, CommonTokenStream
-from gen.TemplateLexer import TemplateLexer
-from gen.TemplateParser import TemplateParser
+from antlr4 import FileStream, CommonTokenStream
+from src.gen.TemplateLexer import TemplateLexer
+from src.gen.TemplateParser import TemplateParser
 
 def main():
-    with open("samples/input1.tpl", "r", encoding="utf-8") as f:
-        text = f.read()
+    input_stream = FileStream("samples/input1.tpl", encoding="utf-8")
+    lexer = TemplateLexer(input_stream)
+    stream = CommonTokenStream(lexer)
 
-    lexer = TemplateLexer(InputStream(text))
-    tokens = CommonTokenStream(lexer)
-    parser = TemplateParser(tokens)
+    parser = TemplateParser(stream)
+    tree = parser.template()  # ✅ قاعدة البداية
 
-    tree = parser.document()
     print(tree.toStringTree(recog=parser))
 
 if __name__ == "__main__":
