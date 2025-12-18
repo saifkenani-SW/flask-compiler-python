@@ -1,0 +1,15 @@
+
+
+ // how to run this Project
+  1 : {
+C:\Users\abdal\AppData\Roaming\Python\Python313\Scripts\antlr4 `
+  -Dlanguage=Python3 -visitor `
+  -o src/gen `
+  grammar/TemplateLexer.g4 grammar/TemplateParser.g4
+       }
+
+      2  :   {
+python -m src.print_tokens
+python -m src.main_parse_tree
+
+        }
