@@ -1,60 +1,41 @@
 lexer grammar TemplateLexer;
 
-
 fragment WS_CH    : [ \t]+ ;
 fragment NL_CH    : '\r'? '\n' ;
-
 fragment ID_START : [a-zA-Z_] ;
 fragment ID_CONT  : [a-zA-Z0-9_]* ;
 fragment ID       : ID_START ID_CONT ;
-
 fragment NUM      : [0-9]+ ('.' [0-9]+)? ;
-
 fragment STR_DQ   : '"'  ( ~["\\\r\n] | '\\' . )* '"' ;
 fragment STR_SQ   : '\'' ( ~['\\\r\n] | '\\' . )* '\'' ;
 fragment STR      : STR_DQ | STR_SQ ;
-
-
-
-
 CSS_BLOCK_START
   : '{%' WS_CH* 'css' WS_CH* '%}' -> pushMode(CSS_MODE)
   ;
-
-
 JSTMT_OPEN
   : '{%' -> pushMode(JINJA_BLOCK_MODE)
   ;
-
-
 JPRINT_OPEN
   : '{{' -> pushMode(JINJA_EXPR_MODE)
   ;
-
-
 LT_SLASH
   : '</' -> pushMode(TAG_MODE)
   ;
-
 LT
   : '<'  -> pushMode(TAG_MODE)
   ;
-
 
 NEWLINE
   : NL_CH
   ;
 
-
 HTML_TEXT
   : (~[<{ \r\n] | '{' ~[%#{])+
   ;
 
-
 TEMPLATE_WS
   : WS_CH -> skip
   ;
-
 
 mode TAG_MODE;
 
@@ -81,30 +62,22 @@ TAG_WS
 TAG_STRING
   : STR
   ;
-
 TAG_OTHER
   : . -> skip
   ;
-
-
 mode JINJA_EXPR_MODE;
-
 JPRINT_CLOSE
   : '}}' -> popMode
   ;
-
 EXPR_WS
   : [ \t\r\n]+ -> skip
   ;
-
 EXPR_NUMBER
   : NUM
   ;
-
 EXPR_STRING
   : STR
   ;
-
 EXPR_ID
   : [a-zA-Z_][a-zA-Z0-9_]*
   ;
@@ -113,13 +86,11 @@ EXPR_OP
   : . -> skip
   ;
 
-
 mode JINJA_BLOCK_MODE;
 
 JSTMT_CLOSE
   : '%}' -> popMode
   ;
-
 BLOCK_WS
   : [ \t\r\n]+ -> skip
   ;
@@ -150,7 +121,6 @@ BLOCK_LTE   : '<=' ;
 BLOCK_GTE   : '>=' ;
 BLOCK_LT    : '<' ;
 BLOCK_GT    : '>' ;
-
 
 BLOCK_NUMBER : NUM ;
 BLOCK_STRING : STR ;
