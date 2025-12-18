@@ -1,5 +1,6 @@
 from antlr4 import InputStream
-from gen.TemplateLexer import TemplateLexer
+from src.gen.TemplateLexer import TemplateLexer
+
 
 def main():
     with open("samples/input1.tpl", "r", encoding="utf-8") as f:
