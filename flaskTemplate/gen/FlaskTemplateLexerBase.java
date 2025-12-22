@@ -12,9 +12,54 @@ public abstract class FlaskTemplateLexerBase extends Lexer {
     private boolean calculatedNextIndent = false;
     private int nextIndentation = 0;
 
+    // ⭐️ مستويات الأقواس المختلفة
+    private int parenLevel = 0;      // ()
+    private int bracketLevel = 0;    // []
+    private int braceLevel = 0;      // {}
+
+    // ⭐️ لحفظ حالة نحتاجها لـ handleNewline
+    private boolean skipNextIndentCalculation = false;
+
     public FlaskTemplateLexerBase(CharStream input) {
         super(input);
         indentations.push(0);
+    }
+
+    /**
+     * تحقق إذا كنا داخل أي نوع من الأقواس
+     */
+    private boolean isInsideBrackets() {
+        return (parenLevel + bracketLevel + braceLevel) > 0;
+    }
+
+    /**
+     * إضافة مستوى للأقواس
+     */
+    private void enterBracket() {
+        parenLevel++;
+    }
+
+    private void enterSquareBracket() {
+        bracketLevel++;
+    }
+
+    private void enterBrace() {
+        braceLevel++;
+    }
+
+    /**
+     * تقليل مستوى للأقواس
+     */
+    private void exitBracket() {
+        if (parenLevel > 0) parenLevel--;
+    }
+
+    private void exitSquareBracket() {
+        if (bracketLevel > 0) bracketLevel--;
+    }
+
+    private void exitBrace() {
+        if (braceLevel > 0) braceLevel--;
     }
 
     @Override
@@ -32,86 +77,148 @@ public abstract class FlaskTemplateLexerBase extends Lexer {
         // 2. الحصول على الرمز التالي من ANTLR
         Token token = super.nextToken();
 
-        if (token.getType() == FlaskTemplateLexer.NEWLINE) {
-            return handleNewline(token);
-        } else if (token.getType() == Token.EOF) {
-            return handleEof(token);
-        } else {
-            lastConsumedToken = token;
-            return token;
+        // 3. تحديث مستويات الأقواس
+        switch (token.getType()) {
+            case FlaskTemplateLexer.LPAREN:
+                enterBracket();
+                break;
+
+            case FlaskTemplateLexer.RPAREN:
+                exitBracket();
+                break;
+
+            case FlaskTemplateLexer.LBRACK:
+                enterSquareBracket();
+                break;
+
+            case FlaskTemplateLexer.RBRACK:
+                exitSquareBracket();
+                break;
+
+            case FlaskTemplateLexer.LBRACE:
+                enterBrace();
+                break;
+
+            case FlaskTemplateLexer.RBRACE:
+                exitBrace();
+                break;
+
+            case FlaskTemplateLexer.NEWLINE:
+                return handleNewline(token);
+
+            case Token.EOF:
+                return handleEof(token);
         }
+
+        lastConsumedToken = token;
+        return token;
     }
 
+    /**
+     * معالجة سطر جديد
+     */
     private Token handleNewline(Token newlineToken) {
-        // إضافة NEWLINE للرموز المعلقة
+        // ⭐️ إذا كنا داخل أقواس، نتجاهل NEWLINE بالكامل ولا نحسب indentation
+        if (isInsideBrackets()) {
+            // نتجاهل هذا السطر ونستمر في القراءة للحصول على التوكن التالي
+            skipNextIndentCalculation = true;
+            calculatedNextIndent = false;
+
+            // الحصول على التوكن التالي مباشرة (تخطي NEWLINE هذا)
+            return nextToken();
+        }
+
+        // ⭐️ خارج الأقواس: معالجة INDENT/DEDENT كالمعتاد
         pendingTokens.add(newlineToken);
 
-        // حساب المسافة البادئة للسطر التالي (دون استهلاك input!)
+        // حساب المسافة البادئة للسطر التالي
         nextIndentation = peekIndentation();
         int currentIndent = indentations.peek();
 
-        // INDENT
+        // INDENT: زيادة في المسافة البادئة
         if (nextIndentation > currentIndent) {
             indentations.push(nextIndentation);
             pendingTokens.add(createIndentToken(newlineToken));
         }
-        // DEDENT
+        // DEDENT: انخفاض في المسافة البادئة
         else if (nextIndentation < currentIndent) {
             handleDedents(newlineToken);
         }
+        // نفس المستوى: لا شيء
 
         calculatedNextIndent = false;
         return pendingTokens.poll();
     }
 
+    /**
+     * حساب المسافة البادئة للسطر التالي (بدون استهلاك input)
+     */
     private int peekIndentation() {
         if (calculatedNextIndent) {
             return nextIndentation;
         }
 
-        // حفظ الموضع الحالي
+        // ⭐️ إذا كنا داخل أقواس أو طلبنا تخطي الحساب
+        if (isInsideBrackets() || skipNextIndentCalculation) {
+            skipNextIndentCalculation = false;
+            calculatedNextIndent = true;
+            nextIndentation = 0;
+            return 0;
+        }
+
+        // حفظ الموضع الحالي للعودة إليه لاحقاً
         int mark = _input.mark();
         int indent = 0;
-        int c;
 
         while (true) {
-            c = _input.LA(1);
+            int c = _input.LA(1);  // الحصول على الحرف التالي دون استهلاكه
 
             // حساب المسافات
             if (c == ' ') {
                 indent++;
                 _input.consume();
-            } else if (c == '\t') {
+            }
+            // حساب Tabs (كل Tab = 8 مسافات في Python)
+            else if (c == '\t') {
                 indent += 8;
                 _input.consume();
             }
             // تخطي التعليقات
             else if (c == '#') {
-                while (_input.LA(1) != '\n' && _input.LA(1) != '\r' && _input.LA(1) != CharStream.EOF) {
+                // استهلاك كل الأحرف حتى نهاية السطر
+                while (_input.LA(1) != '\n' &&
+                        _input.LA(1) != '\r' &&
+                        _input.LA(1) != CharStream.EOF) {
                     _input.consume();
                 }
+                // ⭐️ مهم: continue بعد التعليق للتحقق من الأحرف التالية
                 continue;
             }
-            // تخطي الأسطر الفارغة
+            // سطر فارغ: ابدأ من جديد
             else if (c == '\n' || c == '\r') {
-                // سطر فارغ، ابدأ من جديد
+                // استهلاك أحرف السطر الجديد
                 consumeNewline();
                 indent = 0;
+                // استمر في الحلقة للتحقق من المسافة البادئة للسطر التالي
                 continue;
             }
-            // أي حرف آخر - توقف
+            // أي حرف آخر (بداية كود فعلي) - توقف عن الحساب
             else {
                 break;
             }
         }
 
-        // العودة للموضع الأصلي
+        // العودة إلى الموضع الأصلي (لأننا كنا نقرأ فقط بدون استهلاك)
         _input.release(mark);
+
         calculatedNextIndent = true;
         nextIndentation = indent;
         return indent;
     }
 
+    /**
+     * استهلاك أحرف السطر الجديد
+     */
     private void consumeNewline() {
         int c = _input.LA(1);
         if (c == '\r') {
@@ -124,11 +231,18 @@ public abstract class FlaskTemplateLexerBase extends Lexer {
         }
     }
 
+    /**
+     * معالجة DEDENTs عند انخفاض المسافة البادئة
+     */
     private void handleDedents(Token referenceToken) {
         int currentIndent = indentations.peek();
 
+        // إصدار DEDENTs حتى نصل إلى مستوى المسافة البادئة الحالي
         while (nextIndentation < currentIndent) {
-            if (currentIndent == 0) break;
+            // لا نخرج من المستوى 0 أبداً
+            if (indentations.peek() == 0) {
+                break;
+            }
 
             indentations.pop();
             pendingTokens.add(createDedentToken(referenceToken));
@@ -137,23 +251,31 @@ public abstract class FlaskTemplateLexerBase extends Lexer {
         }
     }
 
+    /**
+     * معالجة نهاية الملف
+     */
     private Token handleEof(Token eofToken) {
-        // توليد DEDENTs حتى المستوى 0
+        // توليد جميع DEDENTs المتبقية حتى نصل إلى المستوى 0
         while (indentations.peek() > 0) {
             indentations.pop();
             pendingTokens.add(createDedentToken(eofToken));
         }
 
+        // إضافة EOF كآخر رمز
         pendingTokens.add(eofToken);
         return pendingTokens.poll();
     }
 
+    /**
+     * إنشاء توكن INDENT
+     */
     private CommonToken createIndentToken(Token referenceToken) {
         CommonToken token = new CommonToken(FlaskTemplateLexer.INDENT, "INDENT");
+        // ضبط معلومات الموقع
         token.setLine(referenceToken.getLine() + 1); // السطر التالي
         token.setCharPositionInLine(0);
 
-        // تعيين start/stop index مناسب
+        // ضبط مؤشرات البداية والنهاية
         int pos = getCharIndex();
         token.setStartIndex(pos);
         token.setStopIndex(pos);
@@ -161,15 +283,30 @@ public abstract class FlaskTemplateLexerBase extends Lexer {
         return token;
     }
 
+    /**
+     * إنشاء توكن DEDENT
+     */
     private CommonToken createDedentToken(Token referenceToken) {
         CommonToken token = new CommonToken(FlaskTemplateLexer.DEDENT, "DEDENT");
+        // ضبط معلومات الموقع
         token.setLine(referenceToken.getLine());
         token.setCharPositionInLine(0);
 
+        // ضبط مؤشرات البداية والنهاية
         int pos = getCharIndex();
         token.setStartIndex(pos);
         token.setStopIndex(pos);
 
         return token;
+    }
+
+    /**
+     * معلومات تصحيح الأخطاء
+     */
+    public String getDebugInfo() {
+        return String.format("Levels: ()=%d, []=%d, {}=%d | InsideBrackets=%s | IndentStack=%s",
+                parenLevel, bracketLevel, braceLevel,
+                isInsideBrackets(),
+                indentations.toString());
     }
 }
