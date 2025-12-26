@@ -1,4 +1,4 @@
-lexer grammar FlaskTemplateLexer;
+lexer grammar JinjaHtmlCssTemplateLexer;
 
 @header{
 package gen;
@@ -10,171 +10,25 @@ package gen;
 
 
 
-tokens { INDENT, DEDENT }
-
-// NEWLINE
-NEWLINE
-    : ('\r'? '\n')
-//    ([ \t]*) {
-//
-//        String spaces = getText().replace("\r","").replace("\n","");
-//        int currentIndent = 0;
-//        for (char ch : spaces.toCharArray()) {
-//            if (ch == '\t') currentIndent += 4;
-//
-//            else currentIndent += 1;
-//        }
-//        emitIndentOrDedent(currentIndent);
-//      }
+HTML_DOCTYPE: '<!' [dD][oO][cC][tT][yY][pP][eE] .*? '>' // Done
+//    -> pushMode(TEMPLATE_MODE)
     ;
 
-// Whitespace and Comments
-WS       : [ \t]+ -> skip;
-COMMENT  : '#' ~[\r\n]* -> skip;
-
-// KeyWord
-DEF      : 'def' ;
-IF       : 'if' ;
-ELIF     : 'elif' ;
-ELSE     : 'else' ;
-FOR      : 'for' ;
-WHILE    : 'while' ;
-RETURN   : 'return' ;
-BREAK    : 'break' ;
-CONTINUE : 'continue' ;
-PASS     : 'pass' ;
-GLOBAL   : 'global' ;
-WITH     : 'with' ;
-AS       : 'as' ;
-
-FROM     : 'from' ;
-IMPORT   : 'import' ;
-CLASS    : 'class' ;
-TRY      : 'try' ;
-EXCEPT   : 'except' ;
-FINALLY  : 'finally' ;
-RAISE    : 'raise' ;
-ASSERT   : 'assert' ;
-
-
-// Logical Operators
-AND      : 'and';
-OR       : 'or';
-IN       : 'in';
-//ISNOT   : 'is not';
-IS      : 'is';
-NOT     : 'not';
-LAMBDA   : 'lambda';
-
-
-// Bool Values
-TRUE     : 'True' ;
-FALSE    : 'False' ;
-NONE     : 'None' ;
-
-// Punctuation and decorators
-AT       : '@';
-DOT      : '.' ;
-COMMA    : ',' ;
-COLON    : ':' ;
-SEMICOLON: ';' ;
-ELLIPSIS : '...' ;
-ARROW    : '->' ;
-
-
-//  Double-Character Operators
-POWER      : '**'; // value = 2 ** 2
-FLOORDIV   : '//'; //  value = 2 // 2
-WALRUS     : ':='; // if (n := len(data)) > 10
-
-
-
-
-
-
-
-//String
-STRING
-    : '"'  ( ~["\\\r\n] | '\\' . )* '"'
-    | '\'' ( ~['\\\r\n] | '\\' . )* '\''
-    | '"""' ( . | '\r' | '\n' )*? '"""'
-    | '\'\'\'' ( . | '\r' | '\n' )*? '\'\'\''
-    ;
-
-// Numbers
-FLOAT    : [0-9]+ '.' [0-9]+
-         | '.' [0-9]+ ;
-INT      : [0-9]+
-         | '0x' [0-9a-fA-F]+ // Hex
-         | '0o' [0-7]+  // Oct
-         | '0b' [01]+ ; // Binary
-
-// Assignment and Arithmetic Operators
-EQ       : '=' ;
-PLUS     : '+' ;
-MINUS    : '-' ;
-STAR     : '*' ;
-SLASH    : '/' ;
-PERCENT  : '%' ;
-STAREQ   : '*=';
-SLASHEQ  : '/=';
-PLUSEQ   : '+=';
-MINUSEQ  : '-=';
-POWEREQ  : '**=' ;
-FLOORDIVEQ: '//=' ;
-BITANDEQ : '&=' ;
-BITOREQ  : '|=' ;
-
-// Comparison Operators
-EQEQ     : '==' ;
-GT       : '>' ;
-LT       : '<' ;
-GTE      : '>=' ;
-LTE      : '<=' ;
-NOTEQ    : '!=';
 
 TEMPLATE_JINJA_BLOCK_START: '{%' -> pushMode(JINJA_BLOCK_MODE);
 TEMPLATE_JINJA_EXPR_START: '{{' -> pushMode(JINJA_EXPR_MODE);
 TEMPLATE_JINJA_COMMENT_START: '{#' -> pushMode(JINJA_COMMENT_MODE);
-// Braces
-LPAREN   : '(' ;
-RPAREN   : ')' ;
-LBRACK   : '[' ;
-RBRACK   : ']' ;
-LBRACE   : '{' ;
-RBRACE   : '}' ;
 
-LINE_CONTINUATION
-    : '\\' '\r'? '\n' -> skip
-    ;
-// Identifiers ( app, Flask, next_id, allowed_file, __name__)
-ID       : [a-zA-Z_][a-zA-Z_0-9]* ;
-
-
-
-HTML_TEXT_2
-    : (~[<{])+  // أبسط: كل شيء ما عدا < أو { سيتم اعتباره نص
-    ;
-
-HTML_DOCTYPE: '<!' [dD][oO][cC][tT][yY][pP][eE] .*? '>' // Done
-    -> pushMode(TEMPLATE_MODE);
 
 //  For TEMPLATE  (html , jinja2)
-mode TEMPLATE_MODE;
+//mode TEMPLATE_MODE;
 HTML_COMMENT
     : '<!--' .*? '-->' -> skip
     ;
 
-// Jinja2
-TEMPLATE_JINJA_BLOCK_START_2: '{%' -> pushMode(JINJA_BLOCK_MODE);
-TEMPLATE_JINJA_EXPR_START_2: '{{' -> pushMode(JINJA_EXPR_MODE);
-TEMPLATE_JINJA_COMMENT_START_2: '{#' -> pushMode(JINJA_COMMENT_MODE);
 
 // CSS
 CSS_START:'<style' -> pushMode(CSS_TAG_MODE);
-
-
-
 
 // HTML
 HTML_TAG_OPEN_SELF: '</' -> pushMode(TAG_MODE);
@@ -184,7 +38,7 @@ TEMPLATE_WS: [ \t\r\n]+ -> skip;
 HTML_TEXT
     : (~[<{])+  // أبسط: كل شيء ما عدا < أو { سيتم اعتباره نص
     ;
-TEMPLATE_END: '</html>' -> popMode;
+TEMPLATE_END: '</html>';
 
 mode TAG_MODE;
 TAG_CLOSE: '>' -> popMode;  // Done
