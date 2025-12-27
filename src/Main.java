@@ -14,12 +14,13 @@ public class Main {
 
 
         String filePath = "test/testJinja2";
+        String filePath2 = "test/python";
 
         try {
-            CharStream input = CharStreams.fromFileName(filePath);
+            CharStream input = CharStreams.fromFileName(filePath2);
 
             FlaskLexer lexer = new FlaskLexer(input);
-            System.out.println("--- Starting Lexer Test: Tokens for " + filePath + " ---");
+            System.out.println("--- Starting Lexer Test: Tokens for " + filePath2 + " ---");
 
             Token token;
 

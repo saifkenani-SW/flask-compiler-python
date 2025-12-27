@@ -1,0 +1,3 @@
+def initialize_products_data():
+    global products_data, next_id
+    products_data.clear()
