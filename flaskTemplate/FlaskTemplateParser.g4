@@ -227,3 +227,17 @@ multiplicativeExpression
 unaryExpression
             : (EXPR_PLUS | EXPR_MINUS | EXPR_NOT)? primaryExpression
             ;
+
+primaryExpression
+    : EXPR_LPAREN expression EXPR_RPAREN                             # parenExpr
+    | EXPR_ID (EXPR_DOT EXPR_ID)*                                    # identifierExpr
+    | EXPR_ID EXPR_LPAREN argumentList? EXPR_RPAREN                  # callExpr
+    | EXPR_STRING                                                    # stringExpr
+    | EXPR_NUMBER                                                    # numberExpr
+    | EXPR_TRUE                                                      # trueExpr
+    | EXPR_FALSE                                                     # falseExpr
+    | EXPR_NONE                                                      # noneExpr
+    | EXPR_LBRACK expressionList? EXPR_RBRACK                        # listExpr
+    | EXPR_LBRACE dictPairList? EXPR_RBRACE                          # dictExpr
+    | primaryExpression EXPR_PIPE EXPR_ID argumentList?              # filterExpr
+    ;
