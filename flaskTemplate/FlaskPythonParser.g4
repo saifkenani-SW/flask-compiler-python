@@ -176,3 +176,7 @@ statement
     | globalStatement   #globalStmt
     | withStatement     #withStmt
     ;
+
+breakStatement
+    : BREAK NEWLINE?
+    ;
