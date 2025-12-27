@@ -12,13 +12,14 @@ public class Main {
     public static void main(String[] args) {
 
 
-        String filePath = "test/test4";
+        String filePath1 = "/home/saif/IdeaProjects/compiler/flask-compiler-python/test/flask";
+        String filePath2 = "/home/saif/IdeaProjects/compiler/flask-compiler-python/test/testJinja2";
 
         try {
-            CharStream input = CharStreams.fromFileName(filePath);
+            CharStream input = CharStreams.fromFileName(filePath2);
 
             FlaskTemplateLexer lexer = new FlaskTemplateLexer(input);
-            System.out.println("--- Starting Lexer Test: Tokens for " + filePath + " ---");
+            System.out.println("--- Starting Lexer Test: Tokens for " + filePath2 + " ---");
 
             Token token;
 

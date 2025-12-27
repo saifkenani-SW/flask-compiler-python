@@ -1,13 +1,203 @@
-lexer grammar FlaskTemplateLexer;
+lexer grammar FlaskLexer;
 
 @header{
 package gen;
 }
-@lexer::superClass {
-    PythonBasicLexerBase
+
+@lexer::members {
+    // ⭐️ المتغيرات
+    private java.util.Stack<Integer> indentations = new java.util.Stack<>();
+    private java.util.LinkedList<Token> pendingTokens = new java.util.LinkedList<>();
+
+    private int parenLevel = 0;
+    private int bracketLevel = 0;
+    private int braceLevel = 0;
+
+    private boolean calculatedNextIndent = false;
+    private int nextIndentation = 0;
+
+    // ⭐️ initializer block - يتم تنفيذه في كل constructors
+    {
+        indentations.push(0);
+    }
+
+    // ⭐️ دالة لمعرفة إذا كنا داخل أقواس
+    private boolean isInsideBrackets() {
+        return (parenLevel + bracketLevel + braceLevel) > 0;
+    }
+
+    private void enterBracket() { parenLevel++; }
+    private void exitBracket() { if (parenLevel > 0) parenLevel--; }
+
+    private void enterSquareBracket() { bracketLevel++; }
+    private void exitSquareBracket() { if (bracketLevel > 0) bracketLevel--; }
+
+    private void enterBrace() { braceLevel++; }
+    private void exitBrace() { if (braceLevel > 0) braceLevel--; }
+
+    @Override
+    public Token nextToken() {
+        // ⭐️ تحقق من pendingTokens أولاً
+        if (!pendingTokens.isEmpty()) {
+            return pendingTokens.poll();
+        }
+
+        // ⭐️ الحصول على التوكن التالي
+        Token token = super.nextToken();
+
+        // ⭐️ تحديث مستويات الأقواس
+        switch (token.getType()) {
+            case LPAREN: enterBracket(); break;
+            case RPAREN: exitBracket(); break;
+            case LBRACK: enterSquareBracket(); break;
+            case RBRACK: exitSquareBracket(); break;
+            case LBRACE: enterBrace(); break;
+            case RBRACE: exitBrace(); break;
+            case NEWLINE: return handleNewline(token);
+            case EOF: return handleEof(token);
+        }
+
+        return token;
+    }
+
+    private Token handleNewline(Token newlineToken) {
+        // ⭐️ أضف NEWLINE إلى pendingTokens (مهم!)
+        pendingTokens.add(newlineToken);
+
+        // ⭐️ إذا كنا داخل أقواس، لا نحسب indentation
+        if (isInsideBrackets()) {
+            calculatedNextIndent = false;
+            return pendingTokens.poll();
+        }
+
+        // ⭐️ حساب المسافة البادئة للسطر التالي
+        nextIndentation = getNextIndentation();
+        int currentIndent = indentations.peek();
+
+        // ⭐️ INDENT: زيادة في المسافة البادئة
+        if (nextIndentation > currentIndent) {
+            indentations.push(nextIndentation);
+            pendingTokens.add(createIndentToken(newlineToken));
+        }
+        // ⭐️ DEDENT: انخفاض في المسافة البادئة
+        else if (nextIndentation < currentIndent) {
+            while (nextIndentation < indentations.peek()) {
+                indentations.pop();
+                pendingTokens.add(createDedentToken(newlineToken));
+            }
+        }
+
+        calculatedNextIndent = false;
+
+        // ⭐️ إرجاع التوكن الأول من pendingTokens
+        return pendingTokens.poll();
+    }
+
+    private int getNextIndentation() {
+        if (calculatedNextIndent) {
+            return nextIndentation;
+        }
+
+        // ⭐️ حفظ الموضع الحالي
+        int mark = _input.mark();
+        int indent = 0;
+
+        while (true) {
+            int c = _input.LA(1);
+
+            if (c == CharStream.EOF) {
+                break;
+            }
+
+            if (c == ' ') {
+                indent++;
+                _input.consume();
+            }
+            else if (c == '\t') {
+                // كل tab = 4 مسافات (معيار Python)
+                indent = ((indent / 4) + 1) * 4;
+                _input.consume();
+            }
+            else if (c == '#') {
+                // تخطي التعليق
+                while (_input.LA(1) != '\n' &&
+                       _input.LA(1) != '\r' &&
+                       _input.LA(1) != CharStream.EOF) {
+                    _input.consume();
+                }
+            }
+            else if (c == '\r' || c == '\n') {
+                // سطر فارغ، ابدأ من الصفر
+                skipNewline();
+                indent = 0;
+                continue;
+            }
+            else {
+                // أي حرف آخر غير مسافة
+                break;
+            }
+        }
+
+        // ⭐️ العودة إلى الموضع الأصلي
+        _input.release(mark);
+        calculatedNextIndent = true;
+        nextIndentation = indent;
+        return indent;
+    }
+
+    private void skipNewline() {
+        int c = _input.LA(1);
+        if (c == '\r') {
+            _input.consume();
+            if (_input.LA(1) == '\n') {
+                _input.consume();
+            }
+        } else if (c == '\n') {
+            _input.consume();
+        }
+    }
+
+    private Token handleEof(Token eofToken) {
+        // ⭐️ إصدار جميع DEDENTs المتبقية
+        while (indentations.peek() > 0) {
+            indentations.pop();
+            pendingTokens.add(createDedentToken(eofToken));
+        }
+
+        // ⭐️ إضافة EOF
+        pendingTokens.add(eofToken);
+        return pendingTokens.poll();
+    }
+
+    private CommonToken createIndentToken(Token referenceToken) {
+        CommonToken token = new CommonToken(INDENT);
+        token.setText("INDENT");
+        token.setLine(referenceToken.getLine());
+        token.setCharPositionInLine(0);
+        token.setStartIndex(referenceToken.getStartIndex());
+        token.setStopIndex(referenceToken.getStopIndex());
+        return token;
+    }
+
+    private CommonToken createDedentToken(Token referenceToken) {
+        CommonToken token = new CommonToken(DEDENT);
+        token.setText("DEDENT");
+        token.setLine(referenceToken.getLine());
+        token.setCharPositionInLine(0);
+        token.setStartIndex(referenceToken.getStartIndex());
+        token.setStopIndex(referenceToken.getStopIndex());
+        return token;
+    }
+
+    // ⭐️ دالة للمساعدة في التصحيح
+    public String getDebugInfo() {
+        return String.format("IndentStack: %s, Levels: ()=%d []=%d {}=%d",
+            indentations.toString(), parenLevel, bracketLevel, braceLevel);
+    }
 }
 
 tokens { INDENT, DEDENT }
+
 
 // KeyWord
 DEF      : 'def' ;
@@ -76,6 +266,7 @@ STRING
     | '\'' ( ~['\\\r\n] | '\\' . )* '\''
     | '"""' ( . | '\r' | '\n' )*? '"""'
     | '\'\'\'' ( . | '\r' | '\n' )*? '\'\'\''
+    | 'f'? '"' (~["\r\n])* '"'   // لا يحلل ما داخل {}
     ;
 
 // Numbers
@@ -102,15 +293,14 @@ FLOORDIVEQ: '//=' ;
 BITANDEQ : '&=' ;
 BITOREQ  : '|=' ;
 
+
 // Comparison Operators
 EQEQ     : '==' ;
 GT       : '>' ;
 LT       : '<' ;
-GTE      : '>=' ;
-LTE      : '<=' ;
 NOTEQ    : '!=';
-
-
+LTEQ: '<=';
+GTEQ: '>=';
 // Braces
 LPAREN   : '(' ;
 RPAREN   : ')' ;
@@ -158,9 +348,10 @@ HTML_TAG_OPEN_SELF: '</' -> pushMode(TAG_MODE);
 HTML_TAG_OPEN: '<' -> pushMode(TAG_MODE);
 TEMPLATE_WS: [ \t\r\n]+ -> skip;
 
-HTML_TEXT: (~[<{] | '{' ~[%#{])+;
+HTML_TEXT
+    : (~[<{\r\n] | '{' ~[%#{])+
+    ;
 TEMPLATE_END: '</html>' -> popMode;
-
 mode TAG_MODE;
 TAG_CLOSE: '>' -> popMode;
 SELF_CLOSE_TAG: '/>' -> popMode;
@@ -181,6 +372,16 @@ VOID_TAG
     | 'track'
     | 'wbr'
     ;
+HTML_BOOLEAN_ATTR
+                : 'required'
+                | 'disabled'
+                | 'checked'
+                | 'readonly'
+                | 'multiple'
+                | 'selected'
+                | 'autofocus'
+                | 'novalidate'
+                ;
 HTML_ID
     : [a-zA-Z][a-zA-Z0-9-]*
     ;
@@ -201,7 +402,6 @@ ATTR_VALUE_ESCAPE: '\\' .;
 ATTR_VALUE_ID
     : ~["'\\{]+
     ;
-
 HTML_ATTR_VALUE_WS: [ \t\r\n]+ -> skip;
 
 mode JINJA_BLOCK_MODE;
@@ -217,11 +417,43 @@ BLOCK_FOR: 'for' ;
 BLOCK_ENDFOR: 'endfor' ;
 BLOCK_SET: 'set' ;
 BLOCK_INCLUDE: 'include' ;
+BLOCK_IN : 'in' ;
+BLOCK_IS:  'is';
 BLOCK_IMPORT: 'import' ;
 BLOCK_FROM: 'from' ;
 BLOCK_WITH: 'with' ;
 BLOCK_ENDWITH: 'endwith' ;
 BLOCK_DOT : '.' ;
+BLOCK_EQ : '=' ;
+BLOCK_AS : 'as';
+BLOCK_COMMA:',';
+BLOCK_AND : 'and' ;
+BLOCK_OR  : 'or' ;
+BLOCK_NOT : 'not' ;
+BLOCK_EQEQ : '==' ;
+BLOCK_NEQ  : '!=' ;
+BLOCK_LT   : '<' ;
+BLOCK_LTE  : '<=' ;
+BLOCK_GT   : '>' ;
+BLOCK_GTE  : '>=' ;
+BLOCK_PLUS     : '+' ;
+BLOCK_MINUS    : '-' ;
+BLOCK_STAR     : '*' ;
+BLOCK_SLASH    : '/' ;
+BLOCK_PERCENT  : '%' ;
+BLOCK_LPAREN : '(' ;
+BLOCK_RPAREN : ')' ;
+BLOCK_PIPE : '|' ;
+BLOCK_TRUE  : 'true' ;
+BLOCK_FALSE : 'false' ;
+BLOCK_NONE  : 'none' ;
+BLOCK_LBRACK : '[' ;
+BLOCK_RBRACK : ']' ;
+BLOCK_LBRACE : '{' ;
+BLOCK_RBRACE : '}' ;
+BLOCK_COLON  : ':' ;
+
+
 
 BLOCK_ID: [a-zA-Z_][a-zA-Z_0-9]* ;
 BLOCK_STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'' ;
@@ -239,6 +471,8 @@ EXPR_LPAREN   : '(' ;
 EXPR_RPAREN   : ')' ;
 EXPR_LBRACK   : '[' ;
 EXPR_RBRACK   : ']' ;
+EXPR_LBRACE   : '{' ;
+EXPR_RBRACE   : '}' ;
 EXPR_COMMA    : ',' ;
 EXPR_COLON    : ':' ;
 EXPR_DOT      : '.' ;
@@ -307,6 +541,9 @@ EXPR_END: '}}' -> popMode ;
 
 mode JINJA_COMMENT_MODE;
 COMMENT_TEXT : .+? ;
+COMMENT_WS
+    : [ \t\r\n]+ -> skip
+    ;
 COMMENT_END: '#}' -> popMode ;
 
 

@@ -8,10 +8,12 @@ app = Flask(__name__)
 # إعدادات التطبيق والملفات
 # ----------------------------------------------------------------------
 # 1. المجلد الذي سيتم حفظ الصور فيه (static/)
-UPLOAD_FOLDER = os.path.join(app.root_path, 'static')
+UPLOAD_FOLDER = 'static'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 # 2. أنواع الملفات المسموح بها (يمكن تعديلها حسب الحاجة)
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
 # 3. الحل لخطأ SERVER_NAME: تعيين اسم الخادم لبناء الروابط خارج الطلب
 app.config['SERVER_NAME'] = 'localhost:5000'
 # ----------------------------------------------------------------------
@@ -23,19 +25,15 @@ app.config['SERVER_NAME'] = 'localhost:5000'
 PRODUCTS_BASE_DATA = [
     {'id': 1, 'name': 'هاتف ذكي X (إصدار محدود)', 'price': 799.99,
      'details': 'أقوى هاتف لعام 2025. يتميز بكاميرا 200MP ومعالج A15.',
-     'image_filename': 'default.jpg'},
+     'image_filename': 'default.png'},
     {'id': 2, 'name': 'سماعات بلوتوث Pro', 'price': 149.00,
      'details': 'جودة صوت عالية وإلغاء ضوضاء فعال لمدة 30 ساعة متواصلة.',
-     'image_filename': 'default.jpg'}
+     'image_filename': 'default.png'}
 ]
 
-products_data = [] # القائمة النهائية التي تحتوي على الروابط
+products_data = []  # القائمة النهائية التي تحتوي على الروابط
 next_id = 3
 
-# دالة مساعدة للتحقق من امتداد الملف
-def allowed_file(filename):
-    return '.' in filename and \
-  filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # دالة لتهيئة المنتجات بالروابط (تُستدعى في سياق التطبيق)
 def initialize_products_data():
@@ -44,15 +42,24 @@ def initialize_products_data():
 
     for p in PRODUCTS_BASE_DATA:
         p_with_url = p.copy()
-        # بناء url_for داخل السياق
         p_with_url['image_url'] = url_for('static', filename=p['image_filename'])
         products_data.append(p_with_url)
 
-    next_id = max(p['id'] for p in PRODUCTS_BASE_DATA) + 1 if PRODUCTS_BASE_DATA else 1
+    # حساب next_id بشكل صحيح
+    if PRODUCTS_BASE_DATA:
+        max_id = 0
+        for p in PRODUCTS_BASE_DATA:
+            if p['id'] > max_id:
+                max_id = p['id']
+        next_id = max_id + 1
+    else:
+        next_id = 1
+
 
 # تهيئة البيانات في سياق التطبيق قبل التشغيل
 with app.app_context():
     initialize_products_data()
+
 
 # ----------------------------------------------------------------------
 # تعريف المسارات (Routes)
@@ -63,26 +70,28 @@ with app.app_context():
 def product_list():
     return render_template('index.html', products=products_data)
 
+
 @app.route('/products/<int:product_id>')
 def product_detail(product_id):
     product = next((p for p in products_data if p['id'] == product_id), None)
     if product is None:
-        return "Product Not Found", 404
+        return "Product Not Found"
     return render_template('product_detail.html', product=product)
+
 
 @app.route('/add', methods=['GET', 'POST'])
 def add_product():
     global next_id
     if request.method == 'POST':
-        image_filename = 'default.jpg' # القيمة الافتراضية
+        image_filename = 'default.jpg'  # القيمة الافتراضية
 
         # 1. معالجة تحميل الصورة
         if 'image_file' in request.files:
             file = request.files['image_file']
-            if file and allowed_file(file.filename):
+            if file and file.filename:  # التحقق من وجود الملف واسمه
                 # تأمين اسم الملف وحفظه
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                file.save(os.path.join(UPLOAD_FOLDER, filename))
                 image_filename = filename
 
         # 2. حفظ البيانات الجديدة
@@ -103,10 +112,11 @@ def add_product():
         return redirect(url_for('product_list'))
 
     return render_template('add_product.html')
+
+
 @app.route('/delete/<int:product_id>', methods=['POST'])
 def delete_product(product_id):
     global products_data
-
     # 1. البحث عن المنتج الذي سيتم حذفه للحصول على اسم ملفه
     product_to_delete = next((p for p in products_data if p['id'] == product_id), None)
 
@@ -114,13 +124,13 @@ def delete_product(product_id):
         filename_to_delete = product_to_delete.get('image_filename')
 
         # 2. حذف الملف من القرص (إذا لم يكن الملف الافتراضي)
-        if filename_to_delete and filename_to_delete != 'default.jpg':
+        if filename_to_delete and filename_to_delete != 'default.png':
             file_path = os.path.join(UPLOAD_FOLDER, filename_to_delete)
 
             # التحقق من وجود الملف قبل محاولة حذفه
             if os.path.exists(file_path):
                 os.remove(file_path)
-                print(f"File deleted successfully: {file_path}") # لغرض التتبع
+                print(f"File deleted successfully: {file_path}")  # لغرض التتبع
             else:
                 print(f"File not found: {file_path}")
 
@@ -128,185 +138,7 @@ def delete_product(product_id):
         products_data = [p for p in products_data if p['id'] != product_id]
 
     return redirect(url_for('product_list'))
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
-
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}تطبيق المنتجات{% endblock %}</title>
-
-    <style class="h" media="all">
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-    margin: 0;
-    padding: 0;
-    text-align: right; /* دعم اللغة العربية */
-    direction: rtl;
-}
-
-header {
-    background-color: #007bff;
-    color: white;
-    padding: 20px;
-    text-align: center;
-}
-
-header h1 {
-    margin: 0 0 10px 0;
-}
-
-nav a {
-    color: white;
-    margin: 0 15px;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-main {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* تصميم قائمة المنتجات (index.html) */
-.product-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    padding: 20px 0;
-}
-
-.product-card {
-    border: 1px solid #ddd;
-    padding: 15px;
-    width: 300px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
-    text-align: center;
-    background-color: #fff;
-}
-
-.product-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    margin-bottom: 10px;
-}
-
-.product-price {
-    color: #28a745;
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-.details-button, .delete-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    text-align: center;
-}
-
-.details-button {
-    background-color: #007bff;
-    color: white;
-}
-
-.delete-button {
-    background-color: #dc3545;
-    color: white;
-}
-
-/* تصميم تفاصيل المنتج (product_detail.html) */
-.detail-container {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.detail-image {
-    width: 100%;
-    max-height: 400px;
-    object-fit: contain;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-}
-
-.description-text {
-    border-right: 3px solid #007bff;
-    padding-right: 10px;
-    margin-top: 10px;
-}
-
-.back-link {
-    display: inline-block;
-    margin-top: 20px;
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-/* تصميم نموذج الإضافة (add_product.html) */
-.product-form label {
-    display: block;
-    margin-top: 15px;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.product-form textarea {
-    width: 98%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    box-sizing: border-box; /* للتأكد من أن padding لا يزيد العرض الكلي */
-}
-
-.submit-button {
-    background-color: #28a745;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    cursor: pointer;
-    font-size: 1.1em;
-    margin-top: 20px;
-    width: 100%;
-}
-
-.no-products {
-    text-align: center;
-    padding: 50px;
-    color: #6c757d;
-    font-style: italic;
-}
-    </style>
-</head>
-<body>
-<header>
-    <h1 style="">متجر التجارة الإلكترونية المصغر</h1>
-    <nav>
-        <a href="{{ url_for('product_list') }}">عرض المنتجات</a>
-        <a href="{{ url_for('add_product') }}">إضافة منتج</a>
-    </nav>
-</header>
-
-<main>
-    {% block content %}
-    <p>محتوى افتراضي.</p>
-    {% endblock %}
-</main>
-
-<footer>
-    <p>&copy; 2025 Flask & Jinja2 App - محمد وسيم البزرة</p>
-</footer>
-</body>
-</html>
+    app.run(debug=True, host='0.0.0.0', port=5000)

@@ -1,0 +1,5 @@
+if PRODUCTS_BASE_DATA: 
+    max_id = 0
+
+i=10
+k=100
