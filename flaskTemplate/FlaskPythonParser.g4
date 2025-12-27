@@ -29,3 +29,9 @@ importStatement
 declaration
     : assignment #declarationStmt
     ;
+
+//  Functions
+
+functionDecl
+    : decorator* DEF ID LPAREN paramList? RPAREN COLON suite #functionDecleration
+    ;
