@@ -207,3 +207,6 @@ leftHandSide
     : primaryExpression
     ;
 
+exprStatement
+    : expression
+    ;
