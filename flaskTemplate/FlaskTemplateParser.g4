@@ -58,3 +58,8 @@ htmlAttributeValue
     : HTML_QUOTE    attrValueContent? ATTR_VALUE_QUOTE     # doubleQuotedValue
     | HTML_APOSTROPHE attrValueContent? ATTR_VALUE_APOSTROPHE  # singleQuotedValue
     ;
+
+
+attrValueContent
+    : attrValueItem+
+    ;
