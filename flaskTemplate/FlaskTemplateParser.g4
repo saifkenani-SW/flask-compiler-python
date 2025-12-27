@@ -41,3 +41,5 @@ closingTag: HTML_TAG_OPEN_SELF HTML_ID TAG_CLOSE #closingTagNode
           ;
 
 selfClosingTag: HTML_TAG_OPEN HTML_ID htmlAttributes SELF_CLOSE_TAG;
+
+voidTag: HTML_TAG_OPEN VOID_TAG htmlAttributes TAG_CLOSE;
