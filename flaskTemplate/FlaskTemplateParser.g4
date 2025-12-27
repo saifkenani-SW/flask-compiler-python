@@ -174,3 +174,7 @@ blockPostfix
 blockArgumentList
     : blockExpression (BLOCK_COMMA blockExpression)*
     ;
+
+blockExpressionList
+    : blockExpression (BLOCK_COMMA blockExpression)*
+    ;
