@@ -134,3 +134,7 @@ blockEqualityExpression
 blockComparisonExpression
     : blockAdditiveExpression ((BLOCK_LT | BLOCK_LTE | BLOCK_GT | BLOCK_GTE | BLOCK_IN | BLOCK_IS) blockAdditiveExpression)*
     ;
+
+blockAdditiveExpression
+    : blockMultiplicativeExpression ((BLOCK_PLUS | BLOCK_MINUS) blockMultiplicativeExpression)*
+    ;
