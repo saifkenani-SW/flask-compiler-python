@@ -145,3 +145,9 @@ listLiteral
       (expression (COMMA NEWLINE* expression)*)?
     NEWLINE* RBRACK
   ;
+
+dictLiteral
+  : LBRACE NEWLINE*
+       (dictEntry (COMMA NEWLINE* dictEntry)*)?
+    NEWLINE* RBRACE
+  ;
