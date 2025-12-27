@@ -287,3 +287,8 @@ cssDeclarations
 cssDeclaration
             : CSS_PROPERTY CSS_COLON cssValues CSS_SEMICOLON
             ;
+
+cssValues
+        : cssValue (CSS_COMMA? cssValue)* #cssValueList
+        ;
+
