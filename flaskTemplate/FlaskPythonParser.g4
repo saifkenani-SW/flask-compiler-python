@@ -160,3 +160,19 @@ setLiteral
         (expression NEWLINE* (COMMA NEWLINE* expression)*)?
     NEWLINE* RBRACE
   ;
+
+
+//    Statements
+
+statement
+    : assignment        #assignmentStmt
+    | exprStatement     #exprStmt
+    | ifStatement       #ifStmt
+    | forStatement      #forStmt
+    | returnStatement   #returnStmt
+    | passStatement     #passStmt
+    | breakStatement    #breakStmt
+    | continueStatement #continueStmt
+    | globalStatement   #globalStmt
+    | withStatement     #withStmt
+    ;
