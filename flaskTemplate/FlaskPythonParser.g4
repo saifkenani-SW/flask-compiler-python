@@ -217,3 +217,9 @@ ifStatement
       (ELSE COLON suite)?
       #ifStatementRule
     ;
+
+
+forStatement
+    : FOR ID IN expression COLON suite  #forStatementRule
+    ;
+
