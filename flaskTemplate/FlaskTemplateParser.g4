@@ -126,3 +126,7 @@ blockLogicalOrExpression
 blockLogicalAndExpression
     : blockEqualityExpression (BLOCK_AND blockEqualityExpression)*
     ;
+
+blockEqualityExpression
+    : blockComparisonExpression ((BLOCK_EQEQ | BLOCK_NEQ) blockComparisonExpression)*
+    ;
