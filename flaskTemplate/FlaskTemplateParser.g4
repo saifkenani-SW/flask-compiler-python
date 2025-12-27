@@ -207,3 +207,7 @@ logicalOrExpression
 logicalAndExpression
                 : equalityExpression (EXPR_AND equalityExpression)*
                 ;
+
+equalityExpression
+                : comparisonExpression ((EXPR_EQEQ | EXPR_NEQ) comparisonExpression)*
+                ;
