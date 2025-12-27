@@ -79,3 +79,6 @@ attrJinjaExpr : ATTR_JINJA_EXPR_START expression EXPR_END ;
 attrJinjaExpr
     : ATTR_JINJA_EXPR_START attrJinjaExprContent /*jinjaExpression*/ EXPR_END
     ;
+attrJinjaExprContent
+    : (.)*?
+    ;
