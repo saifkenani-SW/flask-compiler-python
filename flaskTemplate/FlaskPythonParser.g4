@@ -49,3 +49,7 @@ argumentList
     : NEWLINE* argument NEWLINE*  (NEWLINE* COMMA NEWLINE* argument NEWLINE* )*
     ;
 
+argument
+    : ID EQ expression  #keywordArgument
+    | expression        #positionalArgument
+    ;
