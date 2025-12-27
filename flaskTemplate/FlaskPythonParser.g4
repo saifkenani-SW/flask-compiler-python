@@ -35,3 +35,8 @@ declaration
 functionDecl
     : decorator* DEF ID LPAREN paramList? RPAREN COLON suite #functionDecleration
     ;
+
+
+decorator
+    : AT dottedName LPAREN argumentList? RPAREN NEWLINE #decoratorRule
+    ;
