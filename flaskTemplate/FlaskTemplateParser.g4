@@ -90,3 +90,8 @@ attrJinjaBlock
 
 
 htmlText: HTML_TEXT;
+
+// Jinja2 Blocks
+jinjaBlock:
+    TEMPLATE_JINJA_BLOCK_START jinjaBlockStatement BLOCK_END  #jinjaBlockNode
+    ;
