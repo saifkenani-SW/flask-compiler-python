@@ -182,3 +182,7 @@ blockExpressionList
 blockDictPairList
     : blockDictPair (BLOCK_COMMA blockDictPair)*
     ;
+
+blockDictPair
+    : BLOCK_STRING BLOCK_COLON blockExpression
+    ;
