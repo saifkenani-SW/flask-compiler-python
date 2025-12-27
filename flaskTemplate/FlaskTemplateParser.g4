@@ -87,3 +87,6 @@ attrJinjaExprContent
 attrJinjaBlock
     : ATTR_JINJA_BLOCK_START jinjaBlockStatement BLOCK_END
     ;
+
+
+htmlText: HTML_TEXT;
