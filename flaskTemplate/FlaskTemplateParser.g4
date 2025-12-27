@@ -138,3 +138,7 @@ blockComparisonExpression
 blockAdditiveExpression
     : blockMultiplicativeExpression ((BLOCK_PLUS | BLOCK_MINUS) blockMultiplicativeExpression)*
     ;
+
+blockMultiplicativeExpression
+    : blockUnaryExpression ((BLOCK_STAR | BLOCK_SLASH | BLOCK_PERCENT) blockUnaryExpression)*
+    ;
