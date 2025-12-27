@@ -180,3 +180,6 @@ statement
 breakStatement
     : BREAK NEWLINE?
     ;
+continueStatement
+    : CONTINUE NEWLINE?
+    ;
