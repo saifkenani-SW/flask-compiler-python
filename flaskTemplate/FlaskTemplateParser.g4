@@ -30,3 +30,9 @@ contentItem
     | cssStyle      # cssContent
     | NEWLINE       # newlineContent
     ;
+
+
+
+
+openingTag: HTML_TAG_OPEN HTML_ID htmlAttributes TAG_CLOSE #openingTagNode
+          ;
