@@ -151,3 +151,7 @@ dictLiteral
        (dictEntry (COMMA NEWLINE* dictEntry)*)?
     NEWLINE* RBRACE
   ;
+
+
+dictEntry: expression COLON expression;
+
