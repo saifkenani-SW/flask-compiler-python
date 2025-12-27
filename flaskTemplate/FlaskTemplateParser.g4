@@ -292,3 +292,9 @@ cssValues
         : cssValue (CSS_COMMA? cssValue)* #cssValueList
         ;
 
+cssValue
+    : CSS_STRING     #cssStringValue
+    | CSS_NUMERIC    #cssNumericValue
+    | CSS_COLOR      #cssColorValue
+    | CSS_KEYWORD    #cssKeywordValue
+    ;
