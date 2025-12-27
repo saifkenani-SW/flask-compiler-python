@@ -227,3 +227,8 @@ forStatement
 returnStatement
     : RETURN expression?
     ;
+
+passStatement
+    : PASS
+    ;
+
