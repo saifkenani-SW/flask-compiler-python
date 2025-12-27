@@ -240,3 +240,15 @@ suite
     : braceBlock  #braceSuite
     | indentBlock #indentSuite
     ;
+
+braceBlock
+    : NEWLINE* LBRACE NEWLINE*
+      statement (NEWLINE+ statement)*
+      NEWLINE* RBRACE NEWLINE*
+    ;
+
+indentBlock
+    : NEWLINE INDENT
+      statement (NEWLINE+ statement)*
+      DEDENT
+    ;
