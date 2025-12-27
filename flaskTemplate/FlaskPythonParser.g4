@@ -136,3 +136,12 @@ atom
     | setLiteral               #setAtom
     | LPAREN expression RPAREN #parenAtom
     ;
+
+
+// ----------- list / dict ------------------------
+
+listLiteral
+  : LBRACK NEWLINE*
+      (expression (COMMA NEWLINE* expression)*)?
+    NEWLINE* RBRACK
+  ;
