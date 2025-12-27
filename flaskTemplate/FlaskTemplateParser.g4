@@ -9,3 +9,6 @@ template
         ;
 
 doctype: HTML_DOCTYPE;
+
+html: HTML_TAG_OPEN HTML_ID htmlAttributes TAG_CLOSE templateContent TEMPLATE_END       #htmlDocument
+    ;
