@@ -186,3 +186,6 @@ blockDictPairList
 blockDictPair
     : BLOCK_STRING BLOCK_COLON blockExpression
     ;
+
+
+importList: BLOCK_ID (BLOCK_COMMA BLOCK_ID)*;
