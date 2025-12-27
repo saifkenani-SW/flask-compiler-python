@@ -130,3 +130,7 @@ blockLogicalAndExpression
 blockEqualityExpression
     : blockComparisonExpression ((BLOCK_EQEQ | BLOCK_NEQ) blockComparisonExpression)*
     ;
+
+blockComparisonExpression
+    : blockAdditiveExpression ((BLOCK_LT | BLOCK_LTE | BLOCK_GT | BLOCK_GTE | BLOCK_IN | BLOCK_IS) blockAdditiveExpression)*
+    ;
