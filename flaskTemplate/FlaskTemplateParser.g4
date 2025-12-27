@@ -245,3 +245,6 @@ primaryExpression
 argumentList
             : expression (EXPR_COMMA expression)* #argList
             ;
+expressionList
+            : expression (EXPR_COMMA expression)* #exprList
+            ;
