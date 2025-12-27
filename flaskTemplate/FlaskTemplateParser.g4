@@ -199,3 +199,7 @@ jinjaExpression: expression;
 expression
         : logicalOrExpression #expressionRoot
         ;
+
+logicalOrExpression
+                : logicalAndExpression (EXPR_OR logicalAndExpression)*
+                ;
