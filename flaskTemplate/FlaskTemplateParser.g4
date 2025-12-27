@@ -118,3 +118,7 @@ jinjaBlockStatement:
 blockExpression
     : blockLogicalOrExpression
     ;
+
+blockLogicalOrExpression
+    : blockLogicalAndExpression (BLOCK_OR blockLogicalAndExpression)*
+    ;
