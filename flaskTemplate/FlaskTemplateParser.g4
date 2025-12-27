@@ -258,3 +258,5 @@ cssStyle
     : CSS_START cssTagAttributes? CSS_TAG_CLOSE cssStyleContent STYLE_TAG_END # styleWithAttributes
     | CSS_START CSS_TAG_CLOSE cssStyleContent STYLE_TAG_END                   # styleWithoutAttributes
     ;
+
+cssTagAttributes: cssTagAttribute+;
