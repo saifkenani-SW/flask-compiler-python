@@ -12,3 +12,9 @@ doctype: HTML_DOCTYPE;
 
 html: HTML_TAG_OPEN HTML_ID htmlAttributes TAG_CLOSE templateContent TEMPLATE_END       #htmlDocument
     ;
+
+htmlElement
+    : openingTag (templateContent)? closingTag      # normalElement
+    | voidTag                                     # voidElementTag
+    | selfClosingTag                              # selfClosingElementTag
+    ;
