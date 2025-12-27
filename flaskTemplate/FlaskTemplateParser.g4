@@ -47,3 +47,8 @@ voidTag: HTML_TAG_OPEN VOID_TAG htmlAttributes TAG_CLOSE;
 htmlAttributes
             : htmlAttribute*  #htmlAttributeList
             ;
+
+htmlAttribute
+    : HTML_ID HTML_EQ htmlAttributeValue     # attributeWithValue
+    | HTML_BOOLEAN_ATTR                         # booleanAttribute
+    ;
