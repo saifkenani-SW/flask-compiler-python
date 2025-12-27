@@ -53,3 +53,7 @@ argument
     : ID EQ expression  #keywordArgument
     | expression        #positionalArgument
     ;
+
+paramList
+    : ID (COMMA ID)*
+    ;
