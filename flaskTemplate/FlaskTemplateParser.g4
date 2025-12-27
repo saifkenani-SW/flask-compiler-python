@@ -36,3 +36,6 @@ contentItem
 
 openingTag: HTML_TAG_OPEN HTML_ID htmlAttributes TAG_CLOSE #openingTagNode
           ;
+
+closingTag: HTML_TAG_OPEN_SELF HTML_ID TAG_CLOSE #closingTagNode
+          ;
