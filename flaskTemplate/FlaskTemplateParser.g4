@@ -203,3 +203,7 @@ expression
 logicalOrExpression
                 : logicalAndExpression (EXPR_OR logicalAndExpression)*
                 ;
+
+logicalAndExpression
+                : equalityExpression (EXPR_AND equalityExpression)*
+                ;
