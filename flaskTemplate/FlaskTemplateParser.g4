@@ -22,3 +22,11 @@ htmlElement
 templateContent
     : contentItem+
     ;
+contentItem
+    : htmlElement   # htmlContent
+    | jinjaBlock    # jinjaBlockContent
+    | jinjaExpr     # jinjaExprContent
+    | htmlText      # htmlTextContent
+    | cssStyle      # cssContent
+    | NEWLINE       # newlineContent
+    ;
