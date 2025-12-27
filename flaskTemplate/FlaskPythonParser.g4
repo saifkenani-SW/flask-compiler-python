@@ -252,3 +252,14 @@ indentBlock
       statement (NEWLINE+ statement)*
       DEDENT
     ;
+
+
+
+
+/*simpleStatement
+    : (assignment | exprStatement | returnStatement | passStatement) NEWLINE?
+    ;*/
+
+globalStatement
+    : GLOBAL ID (COMMA ID)* NEWLINE?
+    ;
