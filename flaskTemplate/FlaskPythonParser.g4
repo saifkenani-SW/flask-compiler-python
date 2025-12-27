@@ -10,3 +10,10 @@ options { tokenVocab = FlaskLexer; }
 program
     : programItem* EOF #programRoot
     ;
+programItem
+    : importStatement   #importItem
+    | declaration       #declarationItem
+    | functionDecl      #functionItem
+    | statement         #statementItem
+    | NEWLINE           #newlineItem
+    ;
