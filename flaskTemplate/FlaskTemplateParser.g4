@@ -114,3 +114,7 @@ jinjaBlockStatement:
     | BLOCK_ENDWITH                                                   # withEnd
     | BLOCK_ID (BLOCK_EQ blockExpression)?                            # genericBlock
     ;
+
+blockExpression
+    : blockLogicalOrExpression
+    ;
