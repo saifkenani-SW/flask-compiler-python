@@ -210,3 +210,10 @@ leftHandSide
 exprStatement
     : expression
     ;
+
+ifStatement
+    : IF expression COLON suite
+      (ELIF expression COLON suite)*
+      (ELSE COLON suite)?
+      #ifStatementRule
+    ;
