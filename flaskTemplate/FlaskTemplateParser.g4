@@ -52,3 +52,9 @@ htmlAttribute
     : HTML_ID HTML_EQ htmlAttributeValue     # attributeWithValue
     | HTML_BOOLEAN_ATTR                         # booleanAttribute
     ;
+
+
+htmlAttributeValue
+    : HTML_QUOTE    attrValueContent? ATTR_VALUE_QUOTE     # doubleQuotedValue
+    | HTML_APOSTROPHE attrValueContent? ATTR_VALUE_APOSTROPHE  # singleQuotedValue
+    ;
