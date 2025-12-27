@@ -113,3 +113,11 @@ unaryExpression
 primaryExpression
     : atom (postfix)*
     ;
+
+
+
+postfix
+    : LBRACK expression RBRACK     #indexExpr
+    | DOT ID                       #attrExpr
+    | LPAREN argumentList? RPAREN  #callExpr
+    ;
