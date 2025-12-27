@@ -57,3 +57,59 @@ argument
 paramList
     : ID (COMMA ID)*
     ;
+
+// Expressions
+
+
+/*
+expression
+    : expression OR expression
+    | expression AND expression
+    | NOT expression
+    | expression (EQEQ | NOTEQ | GT | LT | LTEQ | GTEQ | IN | IS) expression
+    | expression (PLUS | MINUS) expression
+    | expression (STAR | SLASH | PERCENT) expression
+    | primary
+    ;*/
+
+//
+expression
+    : logicalOrExpression  #expressionRoot
+    ;
+
+logicalOrExpression
+    : logicalAndExpression (OR logicalAndExpression)*
+    ;
+
+logicalAndExpression
+    : equalityExpression (AND equalityExpression)*
+    ;
+
+equalityExpression
+    : comparisonExpression ((EQEQ | NOTEQ) comparisonExpression)*
+    ;
+
+comparisonExpression
+    : additiveExpression ((LT | LTEQ | GT | GTEQ | IN | IS) additiveExpression)*
+    ;
+
+additiveExpression
+    : multiplicativeExpression ((PLUS | MINUS) multiplicativeExpression)*
+    ;
+
+multiplicativeExpression
+    : unaryExpression ((STAR | SLASH | PERCENT) unaryExpression)*
+    ;
+
+/*unaryExpression
+    : (PLUS | MINUS | NOT)+ primaryExpression   #multipleUnary
+    | primaryExpression                         #simplePrimary
+    ;*/
+unaryExpression
+    : (PLUS | MINUS | NOT) unaryExpression    #unaryOp
+    | primaryExpression                       #simplePrimary
+    ;
+
+primaryExpression
+    : atom (postfix)*
+    ;
