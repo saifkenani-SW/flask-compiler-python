@@ -155,3 +155,8 @@ dictLiteral
 
 dictEntry: expression COLON expression;
 
+setLiteral
+  : LBRACE NEWLINE*
+        (expression NEWLINE* (COMMA NEWLINE* expression)*)?
+    NEWLINE* RBRACE
+  ;
