@@ -269,3 +269,6 @@ cssStyleItem
     : cssRule           #cssRuleItem
     | CSS_CONTENT_COMMENT #cssCommentItem
     ;
+cssRule
+      : cssSelectors CSS_LBRACE cssDeclarations CSS_RBRACE
+      ;
