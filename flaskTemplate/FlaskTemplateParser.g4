@@ -95,3 +95,22 @@ htmlText: HTML_TEXT;
 jinjaBlock:
     TEMPLATE_JINJA_BLOCK_START jinjaBlockStatement BLOCK_END  #jinjaBlockNode
     ;
+
+jinjaBlockStatement:
+    BLOCK_EXTENDS BLOCK_STRING                                        # extendsBlock
+    | BLOCK_BLOCK BLOCK_ID                                            # blockStart
+    | BLOCK_ENDBLOCK                                                  # blockEnd
+    | BLOCK_IF blockExpression                                        # ifStart
+    | BLOCK_ELIF blockExpression                                      # elifBlock
+    | BLOCK_ELSE                                                      # elseBlock
+    | BLOCK_ENDIF                                                     # ifEnd
+    | BLOCK_FOR BLOCK_ID BLOCK_IN blockExpression                     # forStart
+    | BLOCK_ENDFOR                                                    # forEnd
+    | BLOCK_SET BLOCK_ID BLOCK_EQ blockExpression                     # setBlock
+    | BLOCK_INCLUDE BLOCK_STRING                                      # includeBlock
+    | BLOCK_IMPORT BLOCK_STRING (BLOCK_AS BLOCK_ID)?                  # importBlock
+    | BLOCK_FROM BLOCK_STRING BLOCK_IMPORT importList                 # fromImportBlock
+    | BLOCK_WITH blockExpression                                      # withStart
+    | BLOCK_ENDWITH                                                   # withEnd
+    | BLOCK_ID (BLOCK_EQ blockExpression)?                            # genericBlock
+    ;
