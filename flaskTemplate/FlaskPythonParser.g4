@@ -232,3 +232,11 @@ passStatement
     : PASS
     ;
 
+
+
+// ----------- Blocks ---------------------
+
+suite
+    : braceBlock  #braceSuite
+    | indentBlock #indentSuite
+    ;
