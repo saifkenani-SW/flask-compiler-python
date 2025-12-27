@@ -261,3 +261,7 @@ cssStyle
 
 cssTagAttributes: cssTagAttribute+;
 cssTagAttribute: CSS_TAG_ATTR CSS_TAG_EQ CSS_TAG_STRING;
+
+cssStyleContent
+            : cssStyleItem*
+            ;
