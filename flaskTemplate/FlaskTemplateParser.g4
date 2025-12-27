@@ -122,3 +122,7 @@ blockExpression
 blockLogicalOrExpression
     : blockLogicalAndExpression (BLOCK_OR blockLogicalAndExpression)*
     ;
+
+blockLogicalAndExpression
+    : blockEqualityExpression (BLOCK_AND blockEqualityExpression)*
+    ;
