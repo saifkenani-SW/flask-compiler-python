@@ -7,3 +7,5 @@ options {
 template
         : (doctype? html NEWLINE*)+ EOF #templateRoot
         ;
+
+doctype: HTML_DOCTYPE;
