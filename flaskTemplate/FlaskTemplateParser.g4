@@ -245,7 +245,9 @@ primaryExpression
 argumentList
             : expression (EXPR_COMMA expression)* #argList
             ;
-
 expressionList
             : expression (EXPR_COMMA expression)* #exprList
             ;
+dictPairList
+           : dictPair (EXPR_COMMA dictPair)* #dictPairListNode
+           ;
