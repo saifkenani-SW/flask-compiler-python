@@ -189,3 +189,16 @@ continueStatement
 assignment
     : leftHandSide NEWLINE* assignOp NEWLINE* expression NEWLINE* #assignmentRule
     ;
+
+
+assignOp
+    : EQ
+    | PLUSEQ
+    | MINUSEQ
+    | STAREQ
+    | SLASHEQ
+    | POWEREQ
+    | FLOORDIVEQ
+    | BITANDEQ
+    | BITOREQ
+    ;
