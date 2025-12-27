@@ -251,3 +251,4 @@ expressionList
 dictPairList
            : dictPair (EXPR_COMMA dictPair)* #dictPairListNode
            ;
+dictPair: EXPR_STRING EXPR_COLON expression;
