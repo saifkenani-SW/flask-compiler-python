@@ -187,5 +187,9 @@ blockDictPair
     : BLOCK_STRING BLOCK_COLON blockExpression
     ;
 
-
 importList: BLOCK_ID (BLOCK_COMMA BLOCK_ID)*;
+
+// Jinja2 Expressions
+jinjaExpr:
+    TEMPLATE_JINJA_EXPR_START jinjaExpression EXPR_END
+    ;
