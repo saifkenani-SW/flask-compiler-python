@@ -283,3 +283,7 @@ cssSelector: (CSS_CONTENT)+;
 cssDeclarations
               : cssDeclaration*  #cssDeclarationList
               ;
+
+cssDeclaration
+            : CSS_PROPERTY CSS_COLON cssValues CSS_SEMICOLON
+            ;
