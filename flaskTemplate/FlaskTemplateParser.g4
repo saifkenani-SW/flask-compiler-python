@@ -219,3 +219,7 @@ comparisonExpression
 additiveExpression
                 : multiplicativeExpression ((EXPR_PLUS | EXPR_MINUS) multiplicativeExpression)*
                 ;
+
+multiplicativeExpression
+                    : unaryExpression ((EXPR_STAR | EXPR_SLASH | EXPR_PERCENT | EXPR_FLOORDIV) unaryExpression)*
+                    ;
