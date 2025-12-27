@@ -276,3 +276,7 @@ cssRule
 cssSelectors
             : cssSelector (CSS_COMMA cssSelector)*   #cssSelectorExpr
             ;
+
+//  CSS
+cssSelector: (CSS_CONTENT)+;
+
