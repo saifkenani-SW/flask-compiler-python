@@ -1,4 +1,5 @@
-import gen.FlaskTemplateLexer;
+import gen.FlaskLexer;
+import gen.FlaskLexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
@@ -12,12 +13,12 @@ public class Main {
     public static void main(String[] args) {
 
 
-        String filePath = "test/test4";
+        String filePath = "test/testJinja2";
 
         try {
             CharStream input = CharStreams.fromFileName(filePath);
 
-            FlaskTemplateLexer lexer = new FlaskTemplateLexer(input);
+            FlaskLexer lexer = new FlaskLexer(input);
             System.out.println("--- Starting Lexer Test: Tokens for " + filePath + " ---");
 
             Token token;
@@ -27,7 +28,7 @@ public class Main {
 
                 if (token.getChannel() != Lexer.HIDDEN) {
                     // استخدام VOCABULARY للحصول على اسم الرمز
-                    String tokenName = FlaskTemplateLexer.VOCABULARY.getSymbolicName(token.getType());
+                    String tokenName = FlaskLexer.VOCABULARY.getSymbolicName(token.getType());
 
                     // تنسيق الطباعة
                     System.out.printf("Line %-3d Col %-2d -> Type: %-10s Value: \"%s\"\n",
