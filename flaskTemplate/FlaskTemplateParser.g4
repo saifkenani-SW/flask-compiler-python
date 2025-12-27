@@ -152,3 +152,15 @@ blockUnaryExpression
 blockPrimaryExpression
     : blockAtom (blockPostfix)*  #blockPrimary
     ;
+
+blockAtom
+    : BLOCK_LPAREN blockExpression BLOCK_RPAREN         #blockParenExpr
+    | BLOCK_ID                                         #blockIdentifier
+    | BLOCK_STRING                                     #blockStringLiteral
+    | BLOCK_NUMBER                                     #blockNumberLiteral
+    | BLOCK_TRUE                                       #blockTrueLiteral
+    | BLOCK_FALSE                                      #blockFalseLiteral
+    | BLOCK_NONE                                       #blockNoneLiteral
+    | BLOCK_LBRACK blockExpressionList? BLOCK_RBRACK   #blockListLiteral
+    | BLOCK_LBRACE blockDictPairList? BLOCK_RBRACE     #blockDictLiteral
+    ;
