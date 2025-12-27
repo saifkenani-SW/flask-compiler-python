@@ -142,3 +142,8 @@ blockAdditiveExpression
 blockMultiplicativeExpression
     : blockUnaryExpression ((BLOCK_STAR | BLOCK_SLASH | BLOCK_PERCENT) blockUnaryExpression)*
     ;
+
+blockUnaryExpression
+    : (BLOCK_PLUS | BLOCK_MINUS | BLOCK_NOT) blockUnaryExpression #blockUnaryOp
+    | blockPrimaryExpression                                      #blockUnaryBase
+    ;
