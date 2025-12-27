@@ -178,3 +178,7 @@ blockArgumentList
 blockExpressionList
     : blockExpression (BLOCK_COMMA blockExpression)*
     ;
+
+blockDictPairList
+    : blockDictPair (BLOCK_COMMA blockDictPair)*
+    ;
