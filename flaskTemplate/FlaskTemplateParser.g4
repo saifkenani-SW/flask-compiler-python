@@ -211,3 +211,7 @@ logicalAndExpression
 equalityExpression
                 : comparisonExpression ((EXPR_EQEQ | EXPR_NEQ) comparisonExpression)*
                 ;
+
+comparisonExpression
+                : additiveExpression ((EXPR_LT | EXPR_LTE | EXPR_GT | EXPR_GTE | EXPR_IN | EXPR_IS) additiveExpression)*
+                ;
