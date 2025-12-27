@@ -63,3 +63,9 @@ htmlAttributeValue
 attrValueContent
     : attrValueItem+
     ;
+
+attrValueItem
+    : ATTR_VALUE_ID   # attrText
+    | attrJinjaExpr   # attrJinjaExprItem
+    | attrJinjaBlock  # attrJinjaBlockItem
+    ;
