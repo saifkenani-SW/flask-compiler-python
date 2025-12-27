@@ -164,3 +164,13 @@ blockAtom
     | BLOCK_LBRACK blockExpressionList? BLOCK_RBRACK   #blockListLiteral
     | BLOCK_LBRACE blockDictPairList? BLOCK_RBRACE     #blockDictLiteral
     ;
+
+blockPostfix
+    : BLOCK_PIPE BLOCK_ID blockArgumentList?  #blockFilterOp
+    | BLOCK_LPAREN blockArgumentList? BLOCK_RPAREN   #blockCallOp
+    | BLOCK_DOT BLOCK_ID                           #blockMemberOp
+    ;
+
+blockArgumentList
+    : blockExpression (BLOCK_COMMA blockExpression)*
+    ;
