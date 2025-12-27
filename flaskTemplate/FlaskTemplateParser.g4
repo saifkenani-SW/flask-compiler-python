@@ -272,3 +272,7 @@ cssStyleItem
 cssRule
       : cssSelectors CSS_LBRACE cssDeclarations CSS_RBRACE
       ;
+
+cssSelectors
+            : cssSelector (CSS_COMMA cssSelector)*   #cssSelectorExpr
+            ;
