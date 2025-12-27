@@ -147,3 +147,8 @@ blockUnaryExpression
     : (BLOCK_PLUS | BLOCK_MINUS | BLOCK_NOT) blockUnaryExpression #blockUnaryOp
     | blockPrimaryExpression                                      #blockUnaryBase
     ;
+
+
+blockPrimaryExpression
+    : blockAtom (blockPostfix)*  #blockPrimary
+    ;
