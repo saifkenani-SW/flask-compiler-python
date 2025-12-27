@@ -252,3 +252,9 @@ dictPairList
            : dictPair (EXPR_COMMA dictPair)* #dictPairListNode
            ;
 dictPair: EXPR_STRING EXPR_COLON expression;
+
+// CSS Blocks
+cssStyle
+    : CSS_START cssTagAttributes? CSS_TAG_CLOSE cssStyleContent STYLE_TAG_END # styleWithAttributes
+    | CSS_START CSS_TAG_CLOSE cssStyleContent STYLE_TAG_END                   # styleWithoutAttributes
+    ;
