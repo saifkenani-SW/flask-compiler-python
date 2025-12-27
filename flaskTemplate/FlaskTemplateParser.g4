@@ -241,3 +241,7 @@ primaryExpression
     | EXPR_LBRACE dictPairList? EXPR_RBRACE                          # dictExpr
     | primaryExpression EXPR_PIPE EXPR_ID argumentList?              # filterExpr
     ;
+
+argumentList
+            : expression (EXPR_COMMA expression)* #argList
+            ;
