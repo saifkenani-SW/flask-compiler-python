@@ -44,3 +44,8 @@ decorator
 dottedName
     : ID (DOT ID)*
     ;
+
+argumentList
+    : NEWLINE* argument NEWLINE*  (NEWLINE* COMMA NEWLINE* argument NEWLINE* )*
+    ;
+
