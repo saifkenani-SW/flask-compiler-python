@@ -121,3 +121,18 @@ postfix
     | DOT ID                       #attrExpr
     | LPAREN argumentList? RPAREN  #callExpr
     ;
+
+// Atom
+atom
+    : ID                       #idAtom
+    | STRING                   #stringAtom
+    | INT                      #intAtom
+    | FLOAT                    #floatAtom
+    | TRUE                     #trueAtom
+    | FALSE                    #falseAtom
+    | NONE                     #noneAtom
+    | listLiteral              #listAtom
+    | dictLiteral              #dictAtom
+    | setLiteral               #setAtom
+    | LPAREN expression RPAREN #parenAtom
+    ;
