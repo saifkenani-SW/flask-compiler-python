@@ -40,3 +40,7 @@ functionDecl
 decorator
     : AT dottedName LPAREN argumentList? RPAREN NEWLINE #decoratorRule
     ;
+
+dottedName
+    : ID (DOT ID)*
+    ;
