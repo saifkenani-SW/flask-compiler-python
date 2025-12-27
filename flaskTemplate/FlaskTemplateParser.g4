@@ -223,3 +223,7 @@ additiveExpression
 multiplicativeExpression
                     : unaryExpression ((EXPR_STAR | EXPR_SLASH | EXPR_PERCENT | EXPR_FLOORDIV) unaryExpression)*
                     ;
+
+unaryExpression
+            : (EXPR_PLUS | EXPR_MINUS | EXPR_NOT)? primaryExpression
+            ;
