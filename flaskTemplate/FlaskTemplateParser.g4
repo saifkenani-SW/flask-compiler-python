@@ -18,3 +18,7 @@ htmlElement
     | voidTag                                     # voidElementTag
     | selfClosingTag                              # selfClosingElementTag
     ;
+
+templateContent
+    : contentItem+
+    ;
