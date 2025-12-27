@@ -263,3 +263,8 @@ indentBlock
 globalStatement
     : GLOBAL ID (COMMA ID)* NEWLINE?
     ;
+
+
+withStatement
+            : WITH expression (AS ID)? COLON suite  #withStatementRule
+            ;
