@@ -202,3 +202,8 @@ assignOp
     | BITANDEQ
     | BITOREQ
     ;
+
+leftHandSide
+    : primaryExpression
+    ;
+
