@@ -25,3 +25,7 @@ importStatement
     : IMPORT dottedName (COMMA dottedName)* NEWLINE*  #importModule
     | FROM dottedName IMPORT (STAR | dottedName (COMMA dottedName)*) NEWLINE*  #fromImport
     ;
+
+declaration
+    : assignment #declarationStmt
+    ;
