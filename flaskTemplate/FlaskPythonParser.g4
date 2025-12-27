@@ -183,3 +183,9 @@ breakStatement
 continueStatement
     : CONTINUE NEWLINE?
     ;
+
+
+
+assignment
+    : leftHandSide NEWLINE* assignOp NEWLINE* expression NEWLINE* #assignmentRule
+    ;
