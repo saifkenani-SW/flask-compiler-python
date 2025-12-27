@@ -280,3 +280,6 @@ cssSelectors
 //  CSS
 cssSelector: (CSS_CONTENT)+;
 
+cssDeclarations
+              : cssDeclaration*  #cssDeclarationList
+              ;
