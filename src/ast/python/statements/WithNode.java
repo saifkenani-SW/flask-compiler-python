@@ -1,9 +1,9 @@
 package ast.python.statements;
 
-import ast.ASTVisitor;
 import ast.python.expressions.ExpressionNode;
 import ast.python.expressions.IdentifierNode;
 import ast.python.program.BlockNode;
+import ast.python.visitors.PythonASTVisitor;
 
 /**
  * جملة with (مدير السياق)
@@ -42,7 +42,7 @@ public class WithNode extends StatementNode {
     public boolean hasAlias() { return alias != null; }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
+    public <T> T accept(PythonASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }
