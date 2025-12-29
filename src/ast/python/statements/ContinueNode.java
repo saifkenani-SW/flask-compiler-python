@@ -1,6 +1,6 @@
 package ast.python.statements;
 
-import ast.ASTVisitor;
+import ast.python.visitors.PythonASTVisitor;
 
 /**
  * جملة continue
@@ -12,7 +12,7 @@ public class ContinueNode extends StatementNode {
     }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
+    public <T> T accept(PythonASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }
