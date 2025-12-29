@@ -1,10 +1,8 @@
 package ast.python.literals;
 
-import ast.ASTVisitor;
 
-/**
- * عدد عشري
- */
+import ast.python.visitors.PythonASTVisitor;
+
 public class FloatLiteralNode extends LiteralNode {
     private double value;
 
@@ -17,7 +15,7 @@ public class FloatLiteralNode extends LiteralNode {
     public void setValue(double value) { this.value = value; }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
+    public <T> T accept(PythonASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }
