@@ -1,0 +1,31 @@
+package ast.template.jinja.expression;
+
+
+//a + b
+//x == y
+//a and b
+
+public final class BinaryExpr implements Expr {
+
+    private final Expr left;
+    private final String operator;
+    private final Expr right;
+
+    public BinaryExpr(Expr left, String operator, Expr right) {
+        this.left = left;
+        this.operator = operator;
+        this.right = right;
+    }
+
+    public Expr getLeft() {
+        return left;
+    }
+
+    public String getOperator() {
+        return operator;
+    }
+
+    public Expr getRight() {
+        return right;
+    }
+}
