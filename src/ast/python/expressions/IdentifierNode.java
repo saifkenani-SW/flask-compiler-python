@@ -1,10 +1,8 @@
 package ast.python.expressions;
 
-import ast.ASTVisitor;
 
-/**
- * معرف (اسم متغير)
- */
+import ast.python.visitors.PythonASTVisitor;
+
 public class IdentifierNode extends ExpressionNode {
     private String name;
 
@@ -17,7 +15,7 @@ public class IdentifierNode extends ExpressionNode {
     public void setName(String name) { this.name = name; }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
+    public <T> T accept(PythonASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }
