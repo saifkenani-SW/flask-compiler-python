@@ -1,10 +1,8 @@
 package ast.python.literals;
 
-import ast.ASTVisitor;
 
-/**
- * قيمة None
- */
+import ast.python.visitors.PythonASTVisitor;
+
 public class NoneLiteralNode extends LiteralNode {
 
     public NoneLiteralNode(int line, int column) {
@@ -12,7 +10,7 @@ public class NoneLiteralNode extends LiteralNode {
     }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
+    public <T> T accept(PythonASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }

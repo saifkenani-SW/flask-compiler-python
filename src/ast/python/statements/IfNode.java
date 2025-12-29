@@ -1,8 +1,9 @@
 package ast.python.statements;
 
-import ast.ASTVisitor;
 import ast.python.expressions.ExpressionNode;
 import ast.python.program.BlockNode;
+import ast.python.visitors.PythonASTVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +67,7 @@ public class IfNode extends StatementNode {
     public boolean hasElse() { return elseBlock != null; }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
+    public <T> T accept(PythonASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }

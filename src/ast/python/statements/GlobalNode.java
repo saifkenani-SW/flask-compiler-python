@@ -1,6 +1,7 @@
 package ast.python.statements;
 
-import ast.ASTVisitor;
+import ast.python.visitors.PythonASTVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class GlobalNode extends StatementNode {
     public boolean isEmpty() { return variables.isEmpty(); }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
+    public <T> T accept(PythonASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }

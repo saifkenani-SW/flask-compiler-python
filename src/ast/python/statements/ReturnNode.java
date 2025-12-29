@@ -1,7 +1,7 @@
 package ast.python.statements;
 
-import ast.ASTVisitor;
 import ast.python.expressions.ExpressionNode;
+import ast.python.visitors.PythonASTVisitor;
 
 /**
  * جملة return
@@ -32,7 +32,7 @@ public class ReturnNode extends StatementNode {
     public boolean hasValue() { return value != null; }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
+    public <T> T accept(PythonASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }

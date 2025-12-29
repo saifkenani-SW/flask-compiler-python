@@ -1,8 +1,8 @@
 package ast.python.statements;
 
 import ast.python.PythonNode;
-import ast.ASTVisitor;
 import ast.python.expressions.ExpressionNode;
+import ast.python.visitors.PythonASTVisitor;
 
 /**
  * جملة التخصيص
@@ -50,7 +50,7 @@ public class AssignmentNode extends StatementNode {
     }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
+    public <T> T accept(PythonASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }

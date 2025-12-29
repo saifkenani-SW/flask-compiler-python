@@ -1,7 +1,7 @@
 package ast.python;
 
 import ast.ASTNode;
-import ast.ASTVisitor;
+import ast.python.visitors.PythonASTVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,5 +30,5 @@ public abstract class PythonNode extends ASTNode {
         return parent;
     }
 
-    public abstract <T> T accept(ASTVisitor<T> visitor);
+    public abstract <T> T accept(PythonASTVisitor<T> visitor);
 }

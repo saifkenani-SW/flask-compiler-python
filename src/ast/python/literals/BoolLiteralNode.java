@@ -1,10 +1,8 @@
 package ast.python.literals;
 
-import ast.ASTVisitor;
 
-/**
- * قيمة منطقية
- */
+import ast.python.visitors.PythonASTVisitor;
+
 public class BoolLiteralNode extends LiteralNode {
     private boolean value;
 
@@ -17,7 +15,7 @@ public class BoolLiteralNode extends LiteralNode {
     public void setValue(boolean value) { this.value = value; }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
+    public <T> T accept(PythonASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }
