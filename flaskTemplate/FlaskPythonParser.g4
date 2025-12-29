@@ -175,6 +175,7 @@ statement
     | continueStatement #continueStmt
     | globalStatement   #globalStmt
     | withStatement     #withStmt
+    |NEWLINE #newLine
     ;
 
 breakStatement
@@ -237,21 +238,23 @@ passStatement
 // ----------- Blocks ---------------------
 
 suite
-    : braceBlock  #braceSuite
-    | indentBlock #indentSuite
+    : braceBlock
+    | indentBlock
     ;
 
 braceBlock
-    : NEWLINE* LBRACE NEWLINE*
-      statement (NEWLINE+ statement)*
-      NEWLINE* RBRACE NEWLINE*
+    : LBRACE NEWLINE* block NEWLINE* RBRACE
     ;
 
 indentBlock
-    : NEWLINE INDENT
-      statement (NEWLINE+ statement)*
-      DEDENT
+    : NEWLINE* INDENT NEWLINE* block NEWLINE* DEDENT
     ;
+
+block
+    : statement+
+    ;
+
+
 
 
 
