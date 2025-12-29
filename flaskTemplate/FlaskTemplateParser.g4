@@ -4,6 +4,9 @@ options {
     tokenVocab = FlaskLexer;
 }
 
+@header { package gen; }
+
+
 template
         : (doctype? html NEWLINE*)+ EOF #templateRoot
         ;
@@ -56,7 +59,9 @@ htmlAttribute
 
 htmlAttributeValue
     : HTML_QUOTE    attrValueContent? ATTR_VALUE_QUOTE     # doubleQuotedValue
+/*
     | HTML_APOSTROPHE attrValueContent? ATTR_VALUE_APOSTROPHE  # singleQuotedValue
+*/
     ;
 
 
@@ -253,22 +258,30 @@ dictPairList
            ;
 dictPair: EXPR_STRING EXPR_COLON expression;
 
+
+
+
+
+
+
+
+
+
+
+
+
 // CSS Blocks
 cssStyle
-    : CSS_START cssTagAttributes? CSS_TAG_CLOSE cssStyleContent STYLE_TAG_END # styleWithAttributes
-    | CSS_START CSS_TAG_CLOSE cssStyleContent STYLE_TAG_END                   # styleWithoutAttributes
+    : CSS_START cssTagAttributes CSS_TAG_CLOSE cssStyleContent STYLE_TAG_END # styleWithAttributes
     ;
 
-cssTagAttributes: cssTagAttribute+;
+cssTagAttributes: cssTagAttribute*;
 cssTagAttribute: CSS_TAG_ATTR CSS_TAG_EQ CSS_TAG_STRING;
 
 cssStyleContent
-            : cssStyleItem*
+            : cssRule*
             ;
-cssStyleItem
-    : cssRule           #cssRuleItem
-    | CSS_CONTENT_COMMENT #cssCommentItem
-    ;
+
 cssRule
       : cssSelectors CSS_LBRACE cssDeclarations CSS_RBRACE
       ;
