@@ -1,13 +1,11 @@
 package ast.python.literals;
 
-import ast.ASTVisitor;
 import ast.python.expressions.ExpressionNode;
+import ast.python.visitors.PythonASTVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * قاموس
- */
 public class DictLiteralNode extends LiteralNode {
     private List<DictEntry> entries;
 
@@ -39,7 +37,7 @@ public class DictLiteralNode extends LiteralNode {
     public boolean isEmpty() { return entries.isEmpty(); }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
+    public <T> T accept(PythonASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }
