@@ -1,7 +1,7 @@
 package ast.python.statements;
 
-import ast.ASTVisitor;
 import ast.python.expressions.ExpressionNode;
+import ast.python.visitors.PythonASTVisitor;
 
 /**
  * تعبير كجملة (مثل استدعاء دالة)
@@ -22,7 +22,7 @@ public class ExpressionStatementNode extends StatementNode {
     }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
+    public <T> T accept(PythonASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }
