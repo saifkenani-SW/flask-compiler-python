@@ -1,6 +1,7 @@
 package ast.python.expressions;
 
-import ast.ASTVisitor;
+
+import ast.python.visitors.PythonASTVisitor;
 
 /**
  * فهرسة (list[index])
@@ -30,7 +31,7 @@ public class IndexNode extends ExpressionNode {
     }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
+    public <T> T accept(PythonASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }
