@@ -1,7 +1,8 @@
 package ast.python.program;
 
 import ast.python.PythonNode;
-import ast.ASTVisitor;
+import ast.python.visitors.PythonASTVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class BlockNode extends PythonNode {
     public boolean isEmpty() { return statements.isEmpty(); }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
+    public <T> T accept(PythonASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }
