@@ -1,10 +1,7 @@
 package ast.python.literals;
 
-import ast.ASTVisitor;
+import ast.python.visitors.PythonASTVisitor;
 
-/**
- * نص
- */
 public class StringLiteralNode extends LiteralNode {
     private String value;
 
@@ -17,7 +14,7 @@ public class StringLiteralNode extends LiteralNode {
     public void setValue(String value) { this.value = value; }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
+    public <T> T accept(PythonASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 }
