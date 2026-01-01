@@ -1,242 +1,315 @@
 parser grammar FlaskTemplateParser;
-options { tokenVocab=FlaskTemplateLexer; }
-@header{
-package gen;
+
+options {
+    tokenVocab = FlaskLexer;
 }
 
-flask
-    : (statement | NEWLINE)* EOF   #flaskFile
-    ;
+@header { package gen; }
 
 
-
-statement
-    : import_stmt
-    | assign_stmt
-    | funcdef
-    | if_stmt
-    | for_stmt
-    | return_stmt
-    | expr_stmt
-        | global_stmt   // جديد
-        | funcCall
-        | with_stmt
-        | route_stmt
-//        | logical_stmt
-
-    ;
-
-//    logical_stmt
-//        :
-//
-//        ;
-
-
-
-import_stmt
-    : IMPORT ID      #importSimple
-    | FROM dotted_ID IMPORT import_list    #importFrom
-    ;
-
-dotted_ID
-    : ID (DOT ID)*      #dottedID
-    ;
-
-    assign_stmt
-        : target EQ expr    #assignStatement
-            | target PLUSEQ expr                 #plusAssignStatement
-            | target MINUSEQ expr                #minusAssignStatement
-            | target STAREQ expr                 #timesAssignStatement
-            | target SLASHEQ expr                #divideAssignStatement
-            | target POWEREQ expr                 #powerAssignStatement
-            | target FLOORDIVEQ expr             #floorDivAssignStatement
-            | target BITANDEQ expr               #bitAndAssignStatement
-            | target BITOREQ expr                #bitOrAssignStatement
-        | target  #var
-        | target EQ funcCall #funcAssignStatement
-        | target EQ funcc #funccAssignStatement
-
-    //    | target EQ comprehension_expr #comprehensionExpr
+template
+        : (doctype? html NEWLINE*)+ EOF #templateRoot
         ;
 
-comprehension_expr
-    : LPAREN comp_for RPAREN COMMA*
+doctype: HTML_DOCTYPE;
+
+html: HTML_TAG_OPEN HTML_ID htmlAttributes TAG_CLOSE templateContent TEMPLATE_END       #htmlDocument
     ;
 
-comp_for
-    : ID FOR ID IN expr (IF expr)?
+htmlElement
+    : openingTag (templateContent)? closingTag      # normalElement
+    | voidTag                                     # voidElementTag
+    | selfClosingTag                              # selfClosingElementTag
     ;
 
-    funcc
-        : dotted_ID LPAREN (arglist? | comprehension_expr*) RPAREN;
+templateContent
+    : contentItem+
+    ;
+contentItem
+    : htmlElement   # htmlContent
+    | jinjaBlock    # jinjaBlockContent
+    | jinjaExpr     # jinjaExprContent
+    | htmlText      # htmlTextContent
+    | cssStyle      # cssContent
+    | NEWLINE       # newlineContent
+    ;
 
 
-route_stmt:
-    AT funcCall;
 
 
+openingTag: HTML_TAG_OPEN HTML_ID htmlAttributes TAG_CLOSE #openingTagNode
+          ;
 
-    funcCall:
-        dotted_ID LPAREN arglist? RPAREN;
+closingTag: HTML_TAG_OPEN_SELF HTML_ID TAG_CLOSE #closingTagNode
+          ;
 
-        arglist
-            : argument (COMMA argument)*     #argumentList
+selfClosingTag: HTML_TAG_OPEN HTML_ID htmlAttributes SELF_CLOSE_TAG;
+
+voidTag: HTML_TAG_OPEN VOID_TAG htmlAttributes TAG_CLOSE;
+
+htmlAttributes
+            : htmlAttribute*  #htmlAttributeList
             ;
 
-            argument
-                : expr    #positionalArg
-                | ID EQ expr    #keywordArg
-            //    | ID EQ target  #kdf
+htmlAttribute
+    : HTML_ID HTML_EQ htmlAttributeValue     # attributeWithValue
+    | HTML_BOOLEAN_ATTR                         # booleanAttribute
+    ;
+
+
+htmlAttributeValue
+    : HTML_QUOTE    attrValueContent? ATTR_VALUE_QUOTE     # doubleQuotedValue
+/*
+    | HTML_APOSTROPHE attrValueContent? ATTR_VALUE_APOSTROPHE  # singleQuotedValue
+*/
+    ;
+
+
+attrValueContent
+    : attrValueItem+
+    ;
+
+attrValueItem
+    : ATTR_VALUE_ID   # attrText
+    | attrJinjaExpr   # attrJinjaExprItem
+    | attrJinjaBlock  # attrJinjaBlockItem
+    ;
+
+
+/*
+attrJinjaExpr : ATTR_JINJA_EXPR_START expression EXPR_END ;
+*/
+
+
+attrJinjaExpr
+    : ATTR_JINJA_EXPR_START attrJinjaExprContent /*jinjaExpression*/ EXPR_END
+    ;
+attrJinjaExprContent
+    : (.)*?
+    ;
+
+
+attrJinjaBlock
+    : ATTR_JINJA_BLOCK_START jinjaBlockStatement BLOCK_END
+    ;
+
+
+htmlText
+    : (HTML_TEXT | jinjaExpr)+
+    ;
+
+// Jinja2 Blocks
+jinjaBlock:
+    TEMPLATE_JINJA_BLOCK_START jinjaBlockStatement BLOCK_END  #jinjaBlockNode
+    ;
+
+jinjaBlockStatement:
+    BLOCK_IF blockExpression templateContent? BLOCK_ENDIF            # ifStart
+    | BLOCK_ELIF blockExpression templateContent?                     # elifBlock
+    | BLOCK_ELSE templateContent?                                     # elseBlock
+    | BLOCK_FOR BLOCK_ID BLOCK_IN blockExpression templateContent? BLOCK_ENDFOR # forStart
+    | BLOCK_BLOCK BLOCK_ID templateContent? BLOCK_ENDBLOCK           # blockStart
+    | BLOCK_SET BLOCK_ID BLOCK_EQ blockExpression templateContent?    # setBlock
+    | BLOCK_INCLUDE BLOCK_STRING templateContent?                     # includeBlock
+    | BLOCK_IMPORT BLOCK_STRING (BLOCK_AS BLOCK_ID)? templateContent? # importBlock
+    | BLOCK_FROM BLOCK_STRING BLOCK_IMPORT importList templateContent? # fromImportBlock
+    | BLOCK_WITH blockExpression templateContent?                     # withStart
+    | BLOCK_ENDWITH                                                   # withEnd
+    | BLOCK_ID (BLOCK_EQ blockExpression)? templateContent?           # genericBlock
+    | BLOCK_EXTENDS BLOCK_STRING templateContent?                     # extendsBlock
+    ;
+
+
+
+blockExpression
+    : blockLogicalOrExpression
+    ;
+
+blockLogicalOrExpression
+    : blockLogicalAndExpression (BLOCK_OR blockLogicalAndExpression)*
+    ;
+
+blockLogicalAndExpression
+    : blockEqualityExpression (BLOCK_AND blockEqualityExpression)*
+    ;
+
+blockEqualityExpression
+    : blockComparisonExpression ((BLOCK_EQEQ | BLOCK_NEQ) blockComparisonExpression)*
+    ;
+
+blockComparisonExpression
+    : blockAdditiveExpression ((BLOCK_LT | BLOCK_LTE | BLOCK_GT | BLOCK_GTE | BLOCK_IN | BLOCK_IS) blockAdditiveExpression)*
+    ;
+
+blockAdditiveExpression
+    : blockMultiplicativeExpression ((BLOCK_PLUS | BLOCK_MINUS) blockMultiplicativeExpression)*
+    ;
+
+blockMultiplicativeExpression
+    : blockUnaryExpression ((BLOCK_STAR | BLOCK_SLASH | BLOCK_PERCENT) blockUnaryExpression)*
+    ;
+
+blockUnaryExpression
+    : (BLOCK_PLUS | BLOCK_MINUS | BLOCK_NOT) blockUnaryExpression #blockUnaryOp
+    | blockPrimaryExpression                                      #blockUnaryBase
+    ;
+
+
+blockPrimaryExpression
+    : blockAtom (blockPostfix)*  #blockPrimary
+    ;
+
+blockAtom
+    : BLOCK_LPAREN blockExpression BLOCK_RPAREN         #blockParenExpr
+    | BLOCK_ID                                         #blockIdentifier
+    | BLOCK_STRING                                     #blockStringLiteral
+    | BLOCK_NUMBER                                     #blockNumberLiteral
+    | BLOCK_TRUE                                       #blockTrueLiteral
+    | BLOCK_FALSE                                      #blockFalseLiteral
+    | BLOCK_NONE                                       #blockNoneLiteral
+    | BLOCK_LBRACK blockExpressionList? BLOCK_RBRACK   #blockListLiteral
+    | BLOCK_LBRACE blockDictPairList? BLOCK_RBRACE     #blockDictLiteral
+    ;
+
+blockPostfix
+    : BLOCK_PIPE BLOCK_ID blockArgumentList?  #blockFilterOp
+    | BLOCK_LPAREN blockArgumentList? BLOCK_RPAREN   #blockCallOp
+    | BLOCK_DOT BLOCK_ID                           #blockMemberOp
+    ;
+
+blockArgumentList
+    : blockExpression (BLOCK_COMMA blockExpression)*
+    ;
+
+blockExpressionList
+    : blockExpression (BLOCK_COMMA blockExpression)*
+    ;
+
+blockDictPairList
+    : blockDictPair (BLOCK_COMMA blockDictPair)*
+    ;
+
+blockDictPair
+    : BLOCK_STRING BLOCK_COLON blockExpression
+    ;
+
+importList: BLOCK_ID (BLOCK_COMMA BLOCK_ID)*;
+
+// Jinja2 Expressions
+jinjaExpr:
+    TEMPLATE_JINJA_EXPR_START jinjaExpression EXPR_END
+    ;
+
+jinjaExpression: expression;
+
+expression
+        : logicalOrExpression #expressionRoot
+        ;
+
+logicalOrExpression
+                : logicalAndExpression (EXPR_OR logicalAndExpression)*
                 ;
-with_stmt
-    : WITH funcCall (AS ID)? COLON suite
+
+logicalAndExpression
+                : equalityExpression (EXPR_AND equalityExpression)*
+                ;
+
+equalityExpression
+                : comparisonExpression ((EXPR_EQEQ | EXPR_NEQ) comparisonExpression)*
+                ;
+
+comparisonExpression
+                : additiveExpression ((EXPR_LT | EXPR_LTE | EXPR_GT | EXPR_GTE | EXPR_IN | EXPR_IS) additiveExpression)*
+                ;
+
+additiveExpression
+                : multiplicativeExpression ((EXPR_PLUS | EXPR_MINUS) multiplicativeExpression)*
+                ;
+
+multiplicativeExpression
+                    : unaryExpression ((EXPR_STAR | EXPR_SLASH | EXPR_PERCENT | EXPR_FLOORDIV) unaryExpression)*
+                    ;
+
+unaryExpression
+            : (EXPR_PLUS | EXPR_MINUS | EXPR_NOT)? primaryExpression
+            ;
+
+primaryExpression
+    : EXPR_LPAREN expression EXPR_RPAREN                             # parenExpr
+    | EXPR_ID (EXPR_DOT EXPR_ID)*                                    # identifierExpr
+    | EXPR_ID EXPR_LPAREN argumentList? EXPR_RPAREN                  # callExpr
+    | EXPR_STRING                                                    # stringExpr
+    | EXPR_NUMBER                                                    # numberExpr
+    | EXPR_TRUE                                                      # trueExpr
+    | EXPR_FALSE                                                     # falseExpr
+    | EXPR_NONE                                                      # noneExpr
+    | EXPR_LBRACK expressionList? EXPR_RBRACK                        # listExpr
+    | EXPR_LBRACE dictPairList? EXPR_RBRACE                          # dictExpr
+    | primaryExpression EXPR_PIPE EXPR_ID argumentList?              # filterExpr
     ;
 
-import_list
-    : ID (COMMA ID)*    #importList
+argumentList
+            : expression (EXPR_COMMA expression)* #argList
+            ;
+expressionList
+            : expression (EXPR_COMMA expression)* #exprList
+            ;
+dictPairList
+           : dictPair (EXPR_COMMA dictPair)* #dictPairListNode
+           ;
+dictPair: EXPR_STRING EXPR_COLON expression;
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CSS Blocks
+cssStyle
+    : CSS_START cssTagAttributes CSS_TAG_CLOSE cssStyleContent STYLE_TAG_END # styleWithAttributes
     ;
 
+cssTagAttributes: cssTagAttribute*; //2
+cssTagAttribute: CSS_TAG_ATTR CSS_TAG_EQ CSS_TAG_STRING;
 
+cssStyleContent
+            : cssRule*
+            ;
 
-    global_stmt
-        : GLOBAL ID (COMMA ID)*  #globalVariableDeclaration
+cssRule
+      : cssSelectors CSS_LBRACE cssDeclarations CSS_RBRACE
+      ;
+
+cssSelectors
+            : cssSelector (CSS_COMMA cssSelector)*   #cssSelectorExpr
+            ;
+
+//  CSS
+cssSelector: (CSS_CONTENT)+;
+
+cssDeclarations
+              : cssDeclaration*  #cssDeclarationList
+              ;
+
+cssDeclaration
+            : CSS_PROPERTY CSS_COLON cssValues CSS_SEMICOLON
+            ;
+
+cssValues
+        : cssValue (CSS_COMMA? cssValue)* #cssValueList
         ;
 
 
-target
-    : ID   #idTarget
-    | ID DOT ID   #attrTarget
-    | ID LBRACK expr RBRACK      #subscriptTarget
-        | ID DOT ID LBRACK expr RBRACK   #attrSubscriptTarget   // الحل
-
-    | GLOBAL ID   #globalTarget  // omar
+cssValue
+    : CSS_STRING     #cssStringValue
+    | CSS_NUMERIC    #cssNumericValue
+    | CSS_COLOR      #cssColorValue
+    | CSS_KEYWORD    #cssKeywordValue
     ;
-//operation
-//    :
-//    ;
-
-
-
-expr
-    : call_expr     #callExpr
-    | atom   #atomExpr
-    | target #targetExpr
-    | expr EQEQ expr #equalOperation
-          | expr GT expr #greaterThanOperation
-          | expr LT expr #lesserThanOperation
-          | expr GTE expr #greaterOrEqualOperation
-          | expr LTE expr #lesserOrEqualOperation
-          | expr NOTEQ expr #notEqualOperation
-          | expr PLUS expr       #addOperation
-              | expr MINUS expr      #subOperation
-              | expr STAR expr       #mulOperation
-              | expr SLASH expr      #divOperation
-              | expr PERCENT expr    #modOperation
-              | expr AND expr #l
-                      | expr OR expr #h
-                      | expr IN expr #hgg
-                      | expr IS expr #hf
-                      | expr NOT expr #hr
-                      | expr IS NOT expr #hjj
-              | NONE #noneExpr
-
-    ;
-
-
-
-call_expr
-    : ID LPAREN arglist? RPAREN     #functionCall
-    ;
-
-
-
-
-
-atom
-    : ID    #idAtom
-    | STRING    #stringAtom
-    | (INT|FLOAT)     #numberAtom
-    | list_expr  #listAtom
-    | dict_expr    #dictAtom
-    | set_expr #setAtom
-    ;
-
-
-////////////////////////////////////
-// List with suite-like blocks
-list_expr
-    : LBRACK NEWLINE*
-      (expr (COMMA NEWLINE* expr)* COMMA?)?
-      NEWLINE* RBRACK
-    ;
-
-
-////////////////////////////////////
-// Set with suite-like blocks
-////////////////////////////////////
-
-
-set_expr
-    : LBRACE expr (COMMA expr)+ RBRACE
-    ;
-
-
-////////////////////////////////////
-// Dict with suite-like blocks
-////////////////////////////////////
-
-dict_expr
-    : LBRACE NEWLINE*
-      (dict_element (COMMA NEWLINE* dict_element)* COMMA?)?
-      NEWLINE* RBRACE
-    ;
-
-
-dict_element
-    : expr COLON expr
-    ;
-
-
-////////////////////////////////////
-// Suite-like block for nested expressions
-////////////////////////////////////
-
-
-
-funcdef
-    : DEF ID LPAREN paramlist? RPAREN COLON suite  #functionDef
-    ;
-paramlist
-    : ID* (COMMA ID)*   #parameterList
-    ;
-
-if_stmt
-    : IF expr COLON suite elif_clause* else_clause?  #ifStatement
-    ;
-
-elif_clause
-    : ELIF expr COLON suite  #elseIfStatement
-    ;
-
-else_clause
-    : ELSE COLON suite  #elseStatement
-    ;
-
-for_stmt
-    : FOR ID IN expr COLON suite      #forStatement
-    ;
-
-suite
-    : NEWLINE INDENT statement+ NEWLINE DEDENT      #blockSuite
-    ;
-return_stmt
-    : RETURN expr?    #returnStatement
-    ;
-expr_stmt
-    : call_expr    #expressionStatement
-    ;
-
-
-
-
-

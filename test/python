@@ -1,0 +1,6 @@
+if i % 2 == 0 and (i > 10 or i in [1, 3, 5]):
+            temp = {    "index": i,
+                "value": (a + b) * c,
+                "flags": {
+                    "even": True,
+                    "large": i >= 100}  }
