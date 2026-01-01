@@ -94,7 +94,9 @@ attrJinjaBlock
     ;
 
 
-htmlText: HTML_TEXT;
+htmlText
+    : (HTML_TEXT | jinjaExpr)+
+    ;
 
 // Jinja2 Blocks
 jinjaBlock:
@@ -102,23 +104,22 @@ jinjaBlock:
     ;
 
 jinjaBlockStatement:
-    BLOCK_EXTENDS BLOCK_STRING                                        # extendsBlock
-    | BLOCK_BLOCK BLOCK_ID                                            # blockStart
-    | BLOCK_ENDBLOCK                                                  # blockEnd
-    | BLOCK_IF blockExpression                                        # ifStart
-    | BLOCK_ELIF blockExpression                                      # elifBlock
-    | BLOCK_ELSE                                                      # elseBlock
-    | BLOCK_ENDIF                                                     # ifEnd
-    | BLOCK_FOR BLOCK_ID BLOCK_IN blockExpression                     # forStart
-    | BLOCK_ENDFOR                                                    # forEnd
-    | BLOCK_SET BLOCK_ID BLOCK_EQ blockExpression                     # setBlock
-    | BLOCK_INCLUDE BLOCK_STRING                                      # includeBlock
-    | BLOCK_IMPORT BLOCK_STRING (BLOCK_AS BLOCK_ID)?                  # importBlock
-    | BLOCK_FROM BLOCK_STRING BLOCK_IMPORT importList                 # fromImportBlock
-    | BLOCK_WITH blockExpression                                      # withStart
+    BLOCK_IF blockExpression templateContent? BLOCK_ENDIF            # ifStart
+    | BLOCK_ELIF blockExpression templateContent?                     # elifBlock
+    | BLOCK_ELSE templateContent?                                     # elseBlock
+    | BLOCK_FOR BLOCK_ID BLOCK_IN blockExpression templateContent? BLOCK_ENDFOR # forStart
+    | BLOCK_BLOCK BLOCK_ID templateContent? BLOCK_ENDBLOCK           # blockStart
+    | BLOCK_SET BLOCK_ID BLOCK_EQ blockExpression templateContent?    # setBlock
+    | BLOCK_INCLUDE BLOCK_STRING templateContent?                     # includeBlock
+    | BLOCK_IMPORT BLOCK_STRING (BLOCK_AS BLOCK_ID)? templateContent? # importBlock
+    | BLOCK_FROM BLOCK_STRING BLOCK_IMPORT importList templateContent? # fromImportBlock
+    | BLOCK_WITH blockExpression templateContent?                     # withStart
     | BLOCK_ENDWITH                                                   # withEnd
-    | BLOCK_ID (BLOCK_EQ blockExpression)?                            # genericBlock
+    | BLOCK_ID (BLOCK_EQ blockExpression)? templateContent?           # genericBlock
+    | BLOCK_EXTENDS BLOCK_STRING templateContent?                     # extendsBlock
     ;
+
+
 
 blockExpression
     : blockLogicalOrExpression
@@ -275,7 +276,7 @@ cssStyle
     : CSS_START cssTagAttributes CSS_TAG_CLOSE cssStyleContent STYLE_TAG_END # styleWithAttributes
     ;
 
-cssTagAttributes: cssTagAttribute*;
+cssTagAttributes: cssTagAttribute*; //2
 cssTagAttribute: CSS_TAG_ATTR CSS_TAG_EQ CSS_TAG_STRING;
 
 cssStyleContent

@@ -1,0 +1,31 @@
+package ast.template.jinja.blocks;
+import ast.template.TemplateNode;
+
+import java.util.*;
+import ast.template.NodeKind;
+import ast.visitors.TemplateASTVisitor;
+
+public class ImportBlockNode extends JinjaBlockNode {
+    private String templateName;
+    private String alias;
+
+    public ImportBlockNode(int line, int column, String templateName, String alias) {
+        super(NodeKind.JINJA_IMPORT_BLOCK, line, column);
+        this.templateName = templateName;
+        this.alias = alias;
+    }
+
+    public String getTemplateName() { return templateName; }
+    public void setTemplateName(String templateName) { this.templateName = templateName; }
+
+    public String getAlias() { return alias; }
+    public void setAlias(String alias) { this.alias = alias; }
+    @Override
+    public List<TemplateNode> getChildren() {
+        return super.getChildren(); // لا يوجد Expression أو Blocks
+    }
+    @Override
+    public <T> T accept(TemplateASTVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+    }
