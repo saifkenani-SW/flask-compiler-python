@@ -5,11 +5,12 @@ options { tokenVocab = FlaskLexer; }
 @header { package gen; }
 
 
-//   Program
+//       Program (Root)
 
 program
     : programItem* EOF #programRoot
     ;
+
 programItem
     : importStatement   #importItem
     | declaration       #declarationItem
@@ -19,26 +20,30 @@ programItem
     ;
 
 
-
+//      Imports & Declarations
 
 importStatement
-    : IMPORT dottedName (COMMA dottedName)* NEWLINE*  #importModule
-    | FROM dottedName IMPORT (STAR | dottedName (COMMA dottedName)*) NEWLINE*  #fromImport
+    : IMPORT dottedName (COMMA dottedName)* NEWLINE*                 #importModule
+    | FROM dottedName IMPORT (STAR | dottedName (COMMA dottedName)*) NEWLINE* #fromImport
     ;
 
 declaration
     : assignment #declarationStmt
     ;
 
-//  Functions
+
+//          Functions & Decorators
 
 functionDecl
     : decorator* DEF ID LPAREN paramList? RPAREN COLON suite #functionDecleration
     ;
 
-
 decorator
     : AT dottedName LPAREN argumentList? RPAREN NEWLINE #decoratorRule
+    ;
+
+paramList
+    : ID (COMMA ID)*
     ;
 
 dottedName
@@ -46,7 +51,8 @@ dottedName
     ;
 
 argumentList
-    : NEWLINE* argument NEWLINE*  (NEWLINE* COMMA NEWLINE* argument NEWLINE* )*
+    : NEWLINE* argument NEWLINE*
+      (NEWLINE* COMMA NEWLINE* argument NEWLINE*)*
     ;
 
 argument
@@ -54,115 +60,8 @@ argument
     | expression        #positionalArgument
     ;
 
-paramList
-    : ID (COMMA ID)*
-    ;
 
-// Expressions
-
-
-/*
-expression
-    : expression OR expression
-    | expression AND expression
-    | NOT expression
-    | expression (EQEQ | NOTEQ | GT | LT | LTEQ | GTEQ | IN | IS) expression
-    | expression (PLUS | MINUS) expression
-    | expression (STAR | SLASH | PERCENT) expression
-    | primary
-    ;*/
-
-//
-expression
-    : logicalOrExpression  #expressionRoot
-    ;
-
-logicalOrExpression
-    : logicalAndExpression (OR logicalAndExpression)*
-    ;
-
-logicalAndExpression
-    : equalityExpression (AND equalityExpression)*
-    ;
-
-equalityExpression
-    : comparisonExpression ((EQEQ | NOTEQ) comparisonExpression)*
-    ;
-
-comparisonExpression
-    : additiveExpression ((LT | LTEQ | GT | GTEQ | IN | IS) additiveExpression)*
-    ;
-
-additiveExpression
-    : multiplicativeExpression ((PLUS | MINUS) multiplicativeExpression)*
-    ;
-
-multiplicativeExpression
-    : unaryExpression ((STAR | SLASH | PERCENT) unaryExpression)*
-    ;
-
-/*unaryExpression
-    : (PLUS | MINUS | NOT)+ primaryExpression   #multipleUnary
-    | primaryExpression                         #simplePrimary
-    ;*/
-unaryExpression
-    : (PLUS | MINUS | NOT) unaryExpression    #unaryOp
-    | primaryExpression                       #simplePrimary
-    ;
-
-primaryExpression
-    : atom (postfix)*
-    ;
-
-
-
-postfix
-    : LBRACK expression RBRACK     #indexExpr
-    | DOT ID                       #attrExpr
-    | LPAREN argumentList? RPAREN  #callExpr
-    ;
-
-// Atom
-atom
-    : ID                       #idAtom
-    | STRING                   #stringAtom
-    | INT                      #intAtom
-    | FLOAT                    #floatAtom
-    | TRUE                     #trueAtom
-    | FALSE                    #falseAtom
-    | NONE                     #noneAtom
-    | listLiteral              #listAtom
-    | dictLiteral              #dictAtom
-    | setLiteral               #setAtom
-    | LPAREN expression RPAREN #parenAtom
-    ;
-
-
-// ----------- list / dict ------------------------
-
-listLiteral
-  : LBRACK NEWLINE*
-      (expression (COMMA NEWLINE* expression)*)?
-    NEWLINE* RBRACK
-  ;
-
-dictLiteral
-  : LBRACE NEWLINE*
-       (dictEntry (COMMA NEWLINE* dictEntry)*)?
-    NEWLINE* RBRACE
-  ;
-
-
-dictEntry: expression COLON expression;
-
-setLiteral
-  : LBRACE NEWLINE*
-        (expression NEWLINE* (COMMA NEWLINE* expression)*)?
-    NEWLINE* RBRACE
-  ;
-
-
-//    Statements
+//           Statements
 
 statement
     : assignment        #assignmentStmt
@@ -175,22 +74,12 @@ statement
     | continueStatement #continueStmt
     | globalStatement   #globalStmt
     | withStatement     #withStmt
-    |NEWLINE #newLine
+    | NEWLINE           #newLine
     ;
-
-breakStatement
-    : BREAK NEWLINE?
-    ;
-continueStatement
-    : CONTINUE NEWLINE?
-    ;
-
-
 
 assignment
     : leftHandSide NEWLINE* assignOp NEWLINE* expression NEWLINE* #assignmentRule
     ;
-
 
 assignOp
     : EQ
@@ -219,11 +108,13 @@ ifStatement
       #ifStatementRule
     ;
 
-
 forStatement
-    : FOR ID IN expression COLON suite  #forStatementRule
+    : FOR ID IN expression COLON suite #forStatementRule
     ;
 
+withStatement
+    : WITH expression (AS ID)? COLON suite #withStatementRule
+    ;
 
 returnStatement
     : RETURN expression?
@@ -233,9 +124,20 @@ passStatement
     : PASS
     ;
 
+breakStatement
+    : BREAK NEWLINE?
+    ;
+
+continueStatement
+    : CONTINUE NEWLINE?
+    ;
+
+globalStatement
+    : GLOBAL ID (COMMA ID)* NEWLINE?
+    ;
 
 
-// ----------- Blocks ---------------------
+//           Blocks | Suites (Scopes)
 
 suite
     : braceBlock
@@ -255,19 +157,86 @@ block
     ;
 
 
+//               Expressions
+expression
+    : logicalOrExpression #expressionRoot
+    ;
 
+logicalOrExpression
+    : logicalAndExpression (OR logicalAndExpression)*
+    ;
 
+logicalAndExpression
+    : equalityExpression (AND equalityExpression)*
+    ;
 
+equalityExpression
+    : comparisonExpression ((EQEQ | NOTEQ) comparisonExpression)*
+    ;
 
-/*simpleStatement
-    : (assignment | exprStatement | returnStatement | passStatement) NEWLINE?
-    ;*/
+comparisonExpression
+    : additiveExpression ((LT | LTEQ | GT | GTEQ | IN | IS) additiveExpression)*
+    ;
 
-globalStatement
-    : GLOBAL ID (COMMA ID)* NEWLINE?
+additiveExpression
+    : multiplicativeExpression ((PLUS | MINUS) multiplicativeExpression)*
+    ;
+
+multiplicativeExpression
+    : unaryExpression ((STAR | SLASH | PERCENT) unaryExpression)*
+    ;
+
+unaryExpression
+    : (PLUS | MINUS | NOT) unaryExpression #unaryOp
+    | primaryExpression                   #simplePrimary
+    ;
+
+primaryExpression
+    : atom (postfix)*
+    ;
+
+postfix
+    : LBRACK expression RBRACK     #indexExpr
+    | DOT ID                       #attrExpr
+    | LPAREN argumentList? RPAREN  #callExpr
     ;
 
 
-withStatement
-            : WITH expression (AS ID)? COLON suite  #withStatementRule
-            ;
+//           Literals
+
+listLiteral
+    : LBRACK NEWLINE*
+      (expression (COMMA NEWLINE* expression)*)?
+      NEWLINE* RBRACK
+    ;
+
+dictLiteral
+    : LBRACE NEWLINE*
+      (dictEntry (COMMA NEWLINE* dictEntry)*)?
+      NEWLINE* RBRACE
+    ;
+
+dictEntry
+    : expression COLON expression
+    ;
+
+setLiteral
+    : LBRACE NEWLINE*
+      (expression NEWLINE* (COMMA NEWLINE* expression)*)?
+      NEWLINE* RBRACE
+    ;
+
+//      Atom (Leaves)
+atom
+    : ID                       #idAtom
+    | STRING                   #stringAtom
+    | INT                      #intAtom
+    | FLOAT                    #floatAtom
+    | TRUE                     #trueAtom
+    | FALSE                    #falseAtom
+    | NONE                     #noneAtom
+    | listLiteral              #listAtom
+    | dictLiteral              #dictAtom
+    | setLiteral               #setAtom
+    | LPAREN expression RPAREN #parenAtom
+    ;
