@@ -2,9 +2,6 @@ package ast.python.expressions;
 
 import ast.python.visitors.PythonASTVisitor;
 
-/**
- * عملية أحادية (+, -, not)
- */
 public class UnaryOpNode extends ExpressionNode {
     private String operator;
     private ExpressionNode operand;
