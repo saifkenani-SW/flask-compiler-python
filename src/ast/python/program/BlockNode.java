@@ -6,9 +6,6 @@ import ast.python.visitors.PythonASTVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * كتلة من العبارات (مثل جسم دالة أو if)
- */
 public class BlockNode extends PythonNode {
     private List<PythonNode> statements;
 
