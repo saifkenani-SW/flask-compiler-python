@@ -3,10 +3,7 @@ package ast.python.expressions;
 
 import ast.python.visitors.PythonASTVisitor;
 
-/**
- * فهرسة (list[index])
- */
-public class IndexNode extends ExpressionNode {
+public class    IndexNode extends ExpressionNode {
     private ExpressionNode collection;
     private ExpressionNode index;
 
