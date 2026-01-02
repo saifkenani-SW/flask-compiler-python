@@ -248,17 +248,10 @@ SEMICOLON: ';' ;
 ELLIPSIS : '...' ;
 ARROW    : '->' ;
 
-
 //  Double-Character Operators
 POWER      : '**'; // value = 2 ** 2
 FLOORDIV   : '//'; //  value = 2 // 2
 WALRUS     : ':='; // if (n := len(data)) > 10
-
-
-
-
-
-
 
 //String
 STRING
