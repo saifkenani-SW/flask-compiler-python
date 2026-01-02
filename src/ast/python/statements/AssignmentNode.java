@@ -4,12 +4,9 @@ import ast.python.PythonNode;
 import ast.python.expressions.ExpressionNode;
 import ast.python.visitors.PythonASTVisitor;
 
-/**
- * جملة التخصيص
- */
 public class AssignmentNode extends StatementNode {
     private PythonNode target;
-    private String operator; // =, +=, -=, *=, /=, %=, **=, //=
+    private String operator; // =, +=, -=, *=, /=, %=, **=, /=
     private ExpressionNode value;
 
     public AssignmentNode(int line, int column, PythonNode target, ExpressionNode value) {
