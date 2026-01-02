@@ -5,9 +5,6 @@ import ast.python.visitors.PythonASTVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * جملة global
- */
 public class GlobalNode extends StatementNode {
     private List<String> variables;
 
