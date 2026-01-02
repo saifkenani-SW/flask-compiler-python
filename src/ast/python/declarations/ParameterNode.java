@@ -3,9 +3,6 @@ package ast.python.declarations;
 import ast.python.PythonNode;
 import ast.python.visitors.PythonASTVisitor;
 
-/**
- * بارامتر دالة
- */
 public class ParameterNode extends PythonNode {
     private String name;
     private String type;
