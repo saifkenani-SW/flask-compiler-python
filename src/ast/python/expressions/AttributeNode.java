@@ -3,9 +3,6 @@ package ast.python.expressions;
 
 import ast.python.visitors.PythonASTVisitor;
 
-/**
- * سمة كائن (object.attribute)
- */
 public class AttributeNode extends ExpressionNode {
     private ExpressionNode object;
     private String attributeName;
