@@ -5,9 +5,6 @@ import ast.python.expressions.IdentifierNode;
 import ast.python.program.BlockNode;
 import ast.python.visitors.PythonASTVisitor;
 
-/**
- * جملة with (مدير السياق)
- */
 public class WithNode extends StatementNode {
     private ExpressionNode expression;
     private IdentifierNode alias; // بعد as
