@@ -6,9 +6,6 @@ import ast.python.visitors.PythonASTVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * جملة الاستيراد
- */
 public class ImportNode extends PythonNode {
     private String module;
     private List<String> imports;
