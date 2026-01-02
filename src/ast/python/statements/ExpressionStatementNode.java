@@ -3,9 +3,6 @@ package ast.python.statements;
 import ast.python.expressions.ExpressionNode;
 import ast.python.visitors.PythonASTVisitor;
 
-/**
- * تعبير كجملة (مثل استدعاء دالة)
- */
 public class ExpressionStatementNode extends StatementNode {
     private ExpressionNode expression;
 
