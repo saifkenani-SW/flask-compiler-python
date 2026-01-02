@@ -2,9 +2,6 @@ package ast.python.statements;
 
 import ast.python.visitors.PythonASTVisitor;
 
-/**
- * جملة continue
- */
 public class ContinueNode extends StatementNode {
 
     public ContinueNode(int line, int column) {
