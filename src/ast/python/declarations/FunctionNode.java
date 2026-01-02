@@ -6,9 +6,6 @@ import ast.python.visitors.PythonASTVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * تعريف دالة
- */
 public class FunctionNode extends PythonNode {
     private String name;
     private List<ParameterNode> parameters;
