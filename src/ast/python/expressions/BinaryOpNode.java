@@ -3,9 +3,6 @@ package ast.python.expressions;
 
 import ast.python.visitors.PythonASTVisitor;
 
-/**
- * عملية ثنائية (+, -, *, /, ==, !=, <, >, <=, >=, and, or, in, is)
- */
 public class BinaryOpNode extends ExpressionNode {
     private String operator;
     private ExpressionNode left;
