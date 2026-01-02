@@ -3,9 +3,6 @@ package ast.python.statements;
 import ast.python.expressions.ExpressionNode;
 import ast.python.visitors.PythonASTVisitor;
 
-/**
- * جملة return
- */
 public class ReturnNode extends StatementNode {
     private ExpressionNode value;
 

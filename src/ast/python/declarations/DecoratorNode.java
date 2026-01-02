@@ -6,9 +6,6 @@ import ast.python.visitors.PythonASTVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * ديكوراتور دالة
- */
 public class DecoratorNode extends PythonNode {
     private String name;
     private List<PythonNode> arguments;
