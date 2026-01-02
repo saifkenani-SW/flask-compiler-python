@@ -5,9 +5,6 @@ import ast.python.visitors.PythonASTVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * استدعاء دالة
- */
 public class CallNode extends ExpressionNode {
     private ExpressionNode function;
     private List<ExpressionNode> arguments;
