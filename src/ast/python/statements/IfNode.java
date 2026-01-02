@@ -7,9 +7,6 @@ import ast.python.visitors.PythonASTVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * جملة if مع elif و else
- */
 public class IfNode extends StatementNode {
     private ExpressionNode condition;
     private BlockNode thenBlock;
@@ -71,3 +68,26 @@ public class IfNode extends StatementNode {
         return visitor.visit(this);
     }
 }
+
+//IfNode
+//├─ Condition:
+//│   └─ BinaryOp (>)
+//│       ├─ Identifier x
+//│       └─ IntLiteral 0
+//├─ ThenBlock:
+//│   └─ Block
+//│       └─ ExpressionStatement
+//│           └─ Call print("positive")
+//├─ ElifBranch
+//│   ├─ Condition:
+//│   │   └─ BinaryOp (==)
+//│   │       ├─ Identifier x
+//│   │       └─ IntLiteral 0
+//│   └─ Block:
+//│       └─ Block
+//│           └─ ExpressionStatement
+//│               └─ Call print("zero")
+//└─ ElseBlock:
+//    └─ Block
+//        └─ ExpressionStatement
+//            └─ Call print("negative")
