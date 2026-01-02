@@ -343,11 +343,11 @@ CSS_START:'<style' -> pushMode(CSS_TAG_MODE);
 
 
 
-// HTML
+// HTML Tages
 HTML_TAG_OPEN_SELF: '</' -> pushMode(TAG_MODE);
 HTML_TAG_OPEN: '<' -> pushMode(TAG_MODE);
 TEMPLATE_WS: [ \t\r\n]+ -> skip;
-
+//HTML TEXT
 HTML_TEXT
     : (~[<{\r\n] | '{' ~[%#{])+
     ;
