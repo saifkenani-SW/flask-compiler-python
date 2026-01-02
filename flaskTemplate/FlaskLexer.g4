@@ -198,7 +198,6 @@ package gen;
 
 tokens { INDENT, DEDENT }
 
-
 // KeyWord
 DEF      : 'def' ;
 IF       : 'if' ;
@@ -213,7 +212,6 @@ PASS     : 'pass' ;
 GLOBAL   : 'global' ;
 WITH     : 'with' ;
 AS       : 'as' ;
-
 FROM     : 'from' ;
 IMPORT   : 'import' ;
 CLASS    : 'class' ;
@@ -223,7 +221,6 @@ FINALLY  : 'finally' ;
 RAISE    : 'raise' ;
 ASSERT   : 'assert' ;
 
-
 // Logical Operators
 AND      : 'and';
 OR       : 'or';
@@ -232,7 +229,6 @@ IN       : 'in';
 IS      : 'is';
 NOT     : 'not';
 LAMBDA   : 'lambda';
-
 
 // Bool Values
 TRUE     : 'True' ;
@@ -286,7 +282,6 @@ FLOORDIVEQ: '//=' ;
 BITANDEQ : '&=' ;
 BITOREQ  : '|=' ;
 
-
 // Comparison Operators
 EQEQ     : '==' ;
 GT       : '>' ;
@@ -315,7 +310,6 @@ NEWLINE  : '\r'? '\n' ;
 WS       : [ \t]+ -> skip;
 COMMENT  : '#' ~[\r\n]* -> skip;
 
-
 HTML_DOCTYPE: '<!' [dD][oO][cC][tT][yY][pP][eE] .*? '>'
     -> pushMode(TEMPLATE_MODE);
 
@@ -332,8 +326,6 @@ TEMPLATE_JINJA_COMMENT_START: '{#' -> pushMode(JINJA_COMMENT_MODE);
 
 // CSS
 CSS_START:'<style' -> pushMode(CSS_TAG_MODE);
-
-
 
 
 // HTML Tages
@@ -445,7 +437,6 @@ BLOCK_RBRACE : '}' ;
 BLOCK_COLON  : ':' ;
 
 
-
 BLOCK_ID: [a-zA-Z_][a-zA-Z_0-9]* ;
 BLOCK_STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'' ;
 BLOCK_NUMBER: [0-9]+ ('.' [0-9]+)? ;
@@ -505,7 +496,6 @@ EXPR_TRUE     : 'true' | 'True' ;
 EXPR_FALSE    : 'false' | 'False' ;
 EXPR_NONE     : 'none' | 'None' | 'null' | 'Null' ;
 
-
 // Identifiers
 EXPR_ID
     : [a-zA-Z_][a-zA-Z_0-9]*
@@ -557,8 +547,6 @@ CSS_CONTENT_WS: [ \t\r\n]+ -> skip;
 
 CSS_CONTENT: (~[<{ \t\r\n] | '<' ~[/{ \t\r\n] | '</' ~[sS{ \t\r\n])+;
 
-
-
 mode CSS_BLOCK_MODE;
 // CSS Braces
 CSS_RBRACE: '}' -> popMode;
@@ -583,9 +571,6 @@ CSS_PROPERTY
     ;
 
 CSS_SELECTOR: [^{}:;]+;
-
-
-
 
 CSS_ATTR_SELECTOR: '[' [a-zA-Z-]+ '=' CSS_STRING ']';
 
@@ -616,10 +601,5 @@ CSS_BLOCK_WS: [ \t\r\n]+ -> skip;
 
 // CSS Values
 CSS_VALUE: [^};{]+;
-
-
-
-
-
 
 ERROR_CHAR : . ;
