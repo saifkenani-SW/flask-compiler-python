@@ -5,9 +5,6 @@ import ast.python.visitors.PythonASTVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * العقدة الجذرية للبرنامج
- */
 public class ProgramNode extends PythonNode {
     private String fileName;
     private List<PythonNode> statements;
