@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 {% extends "base.html" %}
 
+
 {% block title %}
 قائمة المنتجات
 {% endblock %}

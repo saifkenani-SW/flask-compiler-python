@@ -451,6 +451,9 @@ BLOCK_RBRACK : ']' ;
 BLOCK_LBRACE : '{' ;
 BLOCK_RBRACE : '}' ;
 BLOCK_COLON  : ':' ;
+BLOCK_MACRO : 'macro';
+BLOCK_ENDMACRO : 'endmacro';
+
 
 
 

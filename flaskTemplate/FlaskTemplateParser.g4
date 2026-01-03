@@ -91,11 +91,11 @@ jinjaBlock
     ;
 
 jinjaBlockStatement
-    : BLOCK_IF blockExpression templateContent? BLOCK_ENDIF            # ifStart
+    : BLOCK_IF blockExpression templateContent?             # ifStart
     | BLOCK_ELIF blockExpression templateContent? BLOCK_ENDIF                      # elifBlock
     | BLOCK_ELSE templateContent?                                      # elseBlock
-    | BLOCK_FOR BLOCK_ID BLOCK_IN blockExpression templateContent? BLOCK_ENDFOR # forStart
-    | BLOCK_BLOCK BLOCK_ID templateContent? BLOCK_ENDBLOCK            # blockStart
+    | BLOCK_FOR BLOCK_ID BLOCK_IN blockExpression templateContent?  # forStart
+    | BLOCK_BLOCK BLOCK_ID templateContent?             # blockStart
     | BLOCK_SET BLOCK_ID BLOCK_EQ blockExpression                     # setBlock
     | BLOCK_INCLUDE BLOCK_STRING                                      # includeBlock
     | BLOCK_IMPORT BLOCK_STRING (BLOCK_AS BLOCK_ID)?                  # importBlock
@@ -103,7 +103,15 @@ jinjaBlockStatement
     | BLOCK_WITH blockExpression templateContent? BLOCK_ENDWITH       # withStart
     | BLOCK_EXTENDS BLOCK_STRING                                      # extendsBlock
     | BLOCK_ID (BLOCK_EQ blockExpression)? templateContent?           # genericBlock
+    | BLOCK_MACRO BLOCK_ID BLOCK_LPAREN macroParameters? BLOCK_RPAREN templateContent? BLOCK_ENDMACRO  # macroBlock
+    | BLOCK_ENDBLOCK  #endblock
+    | BLOCK_ENDIF  #endIf
+    | BLOCK_ENDFOR #endFor
     ;
+
+    macroParameters
+        : BLOCK_ID (BLOCK_COMMA BLOCK_ID)*
+        ;
 
 // ============ BLOCK EXPRESSIONS ============
 blockExpression
@@ -181,7 +189,7 @@ importList: BLOCK_ID (BLOCK_COMMA BLOCK_ID)*;
 
 // ============ JINJA2 EXPRESSIONS ============
 jinjaExpr
-    : TEMPLATE_JINJA_EXPR_START jinjaExpression EXPR_END #jinjaExprNode
+    : TEMPLATE_JINJA_EXPR_START jinjaExpression* EXPR_END #jinjaExprNode
     ;
 
 jinjaExpression
@@ -235,7 +243,7 @@ primaryExpression
     ;
 
 argumentList
-    : expression (EXPR_COMMA expression)* #argList
+    : expression (EXPR_COMMA expression)* (EXPR_EQ expression)* #argList
     ;
 
 expressionList
@@ -268,7 +276,7 @@ cssStyleContent
     ;
 
 cssRule
-    : cssSelectors CSS_LBRACE cssDeclarations CSS_RBRACE #cssRuleNode
+    : cssSelectors CSS_CONTENT* CSS_LBRACE cssDeclarations CSS_RBRACE #cssRuleNode
     ;
 
 cssSelectors

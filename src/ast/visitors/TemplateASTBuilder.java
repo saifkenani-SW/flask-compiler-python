@@ -125,16 +125,16 @@ public class TemplateASTBuilder extends FlaskTemplateParserBaseVisitor<TemplateN
         return visitSelfClosingTagNode((FlaskTemplateParser.SelfClosingTagNodeContext) ctx.selfClosingTag());
     }
 
-    @Override
-    public TemplateNode visitSelfClosingTagNode(FlaskTemplateParser.SelfClosingTagNodeContext ctx) {
-
-        HTMLSelfClosingElementNode htmlElementNode = new HTMLSelfClosingElementNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.HTML_ID().getText()
-
-        );
-        htmlElementNode.addAllAttributes(visitHtmlAttributeList(ctx.htmlAttributes()));
-
-        return htmlElementNode;
-    }
+//    @Override
+//    public TemplateNode visitSelfClosingTagNode(FlaskTemplateParser.SelfClosingTagNodeContext ctx) {
+//
+//        HTMLSelfClosingElementNode htmlElementNode = new HTMLSelfClosingElementNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.HTML_ID().getText()
+//
+//        );
+//        htmlElementNode.addAllAttributes(visitHtmlAttributeList(ctx.htmlAttributes()));
+//
+//        return htmlElementNode;
+//    }
 
     @Override
     public TemplateNode visitVoidElementTag(FlaskTemplateParser.VoidElementTagContext ctx) {
@@ -695,7 +695,7 @@ public class TemplateASTBuilder extends FlaskTemplateParserBaseVisitor<TemplateN
 
     @Override
     public TemplateNode visitJinjaExprNode(FlaskTemplateParser.JinjaExprNodeContext ctx) {
-        return visitJinjaExpression(ctx.jinjaExpression());
+        return visitJinjaExpression((FlaskTemplateParser.JinjaExpressionContext) ctx.jinjaExpression());
     }
 
     @Override

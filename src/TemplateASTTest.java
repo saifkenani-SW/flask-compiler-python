@@ -10,7 +10,11 @@ import gen.FlaskTemplateParser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import symbolTable.JinjaSymbolTable.JinjaSymbolTable;
+import symbolTable.JinjaSymbolTable.JinjaSymbolTableBuilder;
+import symbol_table.*;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,36 +22,13 @@ import java.util.Map;
 public class TemplateASTTest {
 
     public static void main(String[] args) throws Exception {
-        // مثال نص HTML مع Doctype وصفة عادية وصفة boolean
-        String input = "<!DOCTYPE html>\n" +
-                "<html lang=\"ar\" dir=\"rtl\">\n" +
-                "{% extends \"base.html\" %}\n" +
-                "{% block title %}إضافة منتج جديد{% endblock %}\n" +
-                "\n" +
-                "{% block content %}\n" +
-                "<h2>إضافة منتج جديد</h2>\n" +
-                "\n" +
-                "<form method=\"POST\" action=\"{{ url_for('add_product') }}\" class=\"product-form\" enctype=\"multipart/form-data\">\n" +
-                "\n" +
-                "    <label for=\"name\">اسم المنتج:</label>\n" +
-                "    <input type=\"text\" id=\"name\" name=\"name\" required>\n" +
-                "\n" +
-                "    <label for=\"price\">سعر المنتج ($):</label>\n" +
-                "    <input type=\"number\" id=\"price\" name=\"price\" step=\"0.01\" min=\"0.01\" required>\n" +
-                "\n" +
-                "    <label for=\"details\">التفاصيل / الوصف:</label>\n" +
-                "    <textarea id=\"details\" name=\"details\" rows=\"5\" required></textarea>\n" +
-                "\n" +
-                "    <label for=\"image\">صورة المنتج:</label>\n" +
-                "    <input type=\"file\" id=\"image\" name=\"image_file\" accept=\".jpg, .jpeg, .png, .gif\" required>\n" +
-                "\n" +
-                "    <button type=\"submit\" class=\"submit-button\">حفظ وإضافة المنتج</button>\n" +
-                "</form>\n" +
-                "{% endblock %}\n" +
-                "</html>";
+//        Path templatePath = Path.of("test/add_product");
+//        Path templatePath = Path.of("test/index");
+//        Path templatePath = Path.of("test/product_details");
+        Path templatePath = Path.of("test/base");
 
         // 1. إعداد Lexer
-        CharStream charStream = CharStreams.fromString(input);
+        CharStream charStream = CharStreams.fromPath(templatePath);
         FlaskLexer lexer = new FlaskLexer(charStream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
 
@@ -60,6 +41,23 @@ public class TemplateASTTest {
         // 4. زيارة الشجرة باستخدام TemplateASTBuilder
         TemplateASTBuilder visitor = new TemplateASTBuilder();
         TemplateNode rootNode = visitor.visitTemplateRoot(tree);
+
+        // 2. بناء جدول الرموز
+        JinjaSymbolTableBuilder builder = new JinjaSymbolTableBuilder("test.html");
+        builder.visit(tree);
+
+        // 3. التحليل
+        JinjaSymbolTable symbolTable = builder.getSymbolTable();
+        symbolTable.analyze();
+
+        // 4. عرض النتائج
+        symbolTable.printSymbolTable();
+        symbolTable.printAnalysisReport();
+
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
 
         // 5. طباعة النتيجة
         printNode(rootNode, 0);

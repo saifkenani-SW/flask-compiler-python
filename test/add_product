@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+{% extends "base.html" %}
+{% block title %}إضافة منتج جديد{% endblock %}
 
+{% block content %}
 <h2>إضافة منتج جديد</h2>
 
-<form method="POST" class="product-form" enctype="multipart/form-data">
+<form method="POST" action="{{ url_for('add_product') }}" class="product-form" enctype="multipart/form-data">
 
     <label for="name">اسم المنتج:</label>
     <input type="text" id="name" name="name" required>
@@ -19,4 +22,5 @@
 
     <button type="submit" class="submit-button">حفظ وإضافة المنتج</button>
 </form>
+{% endblock %}
 </html>
