@@ -5,7 +5,6 @@ package gen;
 }
 
 @lexer::members {
-    // ⭐️ المتغيرات
     private java.util.Stack<Integer> indentations = new java.util.Stack<>();
     private java.util.LinkedList<Token> pendingTokens = new java.util.LinkedList<>();
 
@@ -16,12 +15,10 @@ package gen;
     private boolean calculatedNextIndent = false;
     private int nextIndentation = 0;
 
-    // ⭐️ initializer block - يتم تنفيذه في كل constructors
     {
         indentations.push(0);
     }
 
-    // ⭐️ دالة لمعرفة إذا كنا داخل أقواس
     private boolean isInsideBrackets() {
         return (parenLevel + bracketLevel + braceLevel) > 0;
     }
@@ -37,15 +34,12 @@ package gen;
 
     @Override
     public Token nextToken() {
-        // ⭐️ تحقق من pendingTokens أولاً
         if (!pendingTokens.isEmpty()) {
             return pendingTokens.poll();
         }
 
-        // ⭐️ الحصول على التوكن التالي
         Token token = super.nextToken();
 
-        // ⭐️ تحديث مستويات الأقواس
         switch (token.getType()) {
             case LPAREN: enterBracket(); break;
             case RPAREN: exitBracket(); break;
@@ -61,25 +55,20 @@ package gen;
     }
 
     private Token handleNewline(Token newlineToken) {
-        // ⭐️ أضف NEWLINE إلى pendingTokens (مهم!)
         pendingTokens.add(newlineToken);
 
-        // ⭐️ إذا كنا داخل أقواس، لا نحسب indentation
         if (isInsideBrackets()) {
             calculatedNextIndent = false;
             return pendingTokens.poll();
         }
 
-        // ⭐️ حساب المسافة البادئة للسطر التالي
         nextIndentation = getNextIndentation();
         int currentIndent = indentations.peek();
 
-        // ⭐️ INDENT: زيادة في المسافة البادئة
         if (nextIndentation > currentIndent) {
             indentations.push(nextIndentation);
             pendingTokens.add(createIndentToken(newlineToken));
         }
-        // ⭐️ DEDENT: انخفاض في المسافة البادئة
         else if (nextIndentation < currentIndent) {
             while (nextIndentation < indentations.peek()) {
                 indentations.pop();
@@ -89,7 +78,6 @@ package gen;
 
         calculatedNextIndent = false;
 
-        // ⭐️ إرجاع التوكن الأول من pendingTokens
         return pendingTokens.poll();
     }
 
@@ -98,7 +86,6 @@ package gen;
             return nextIndentation;
         }
 
-        // ⭐️ حفظ الموضع الحالي
         int mark = _input.mark();
         int indent = 0;
 
@@ -133,12 +120,10 @@ package gen;
                 continue;
             }
             else {
-                // أي حرف آخر غير مسافة
                 break;
             }
         }
 
-        // ⭐️ العودة إلى الموضع الأصلي
         _input.release(mark);
         calculatedNextIndent = true;
         nextIndentation = indent;
@@ -158,13 +143,11 @@ package gen;
     }
 
     private Token handleEof(Token eofToken) {
-        // ⭐️ إصدار جميع DEDENTs المتبقية
         while (indentations.peek() > 0) {
             indentations.pop();
             pendingTokens.add(createDedentToken(eofToken));
         }
 
-        // ⭐️ إضافة EOF
         pendingTokens.add(eofToken);
         return pendingTokens.poll();
     }
@@ -189,7 +172,6 @@ package gen;
         return token;
     }
 
-    // ⭐️ دالة للمساعدة في التصحيح
     public String getDebugInfo() {
         return String.format("IndentStack: %s, Levels: ()=%d []=%d {}=%d",
             indentations.toString(), parenLevel, bracketLevel, braceLevel);
