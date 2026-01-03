@@ -6,6 +6,8 @@ import ast.template.TemplateNode;
 import ast.visitors.TemplateASTVisitor;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
 public class ForBlockNode extends JinjaBlockNode {
     private String variable;
     private ExpressionNode iterable;
@@ -17,24 +19,63 @@ public class ForBlockNode extends JinjaBlockNode {
         this.iterable = iterable;
     }
 
-    public String getVariable() { return variable; }
-    public void setVariable(String variable) { this.variable = variable; }
+    // Getters
+    public String getVariable() {
+        return variable;
+    }
 
-    public ExpressionNode getIterable() { return iterable; }
-    public void setIterable(ExpressionNode iterable) { this.iterable = iterable; }
+    public ExpressionNode getIterable() {
+        return iterable;
+    }
 
-    public ElseBlockNode getElseBlock() { return elseBlock; }
-    public void setElseBlock(ElseBlockNode elseBlock) { this.elseBlock = elseBlock; }
+    public ElseBlockNode getElseBlock() {
+        return elseBlock;
+    }
+
+    // Setters
+    public void setVariable(String variable) {
+        this.variable = variable;
+    }
+
+    public void setIterable(ExpressionNode iterable) {
+        this.iterable = iterable;
+    }
+
+    public void setElseBlock(ElseBlockNode elseBlock) {
+        this.elseBlock = elseBlock;
+    }
+
+    // Utility methods
+    public boolean hasElseBlock() {
+        return this.elseBlock != null;
+    }
+
+    public boolean isSingleVariable() {
+        return variable != null && !variable.contains(",");
+    }
+
+    public List<String> getVariables() {
+        if (variable == null) return Collections.emptyList();
+
+        return Arrays.stream(variable.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ForBlockNode{variable='%s', line=%d, column=%d, hasElse=%b, content=%d}",
+                variable, getLine(), getColumn(), hasElseBlock(), getContent().size());
+    }
 
     @Override
     public List<TemplateNode> getChildren() {
-        List<TemplateNode> children = new ArrayList<>(super.getChildren());
-        if (iterable != null) children.add(iterable);
-        if (elseBlock != null) children.add(elseBlock);
-        return children;
+        return List.of();
     }
     @Override
     public <T> T accept(TemplateASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
+
 }

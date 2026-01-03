@@ -22,10 +22,16 @@ public class CSSStyleNode extends CSSNode {
     public void addAttribute(CSSAttributeNode attribute) {
         attributes.add(attribute);
     }
+    public void addAttributes(List<CSSAttributeNode> attributes) {
+        this.attributes.addAll(attributes);
+    }
 
     public List<CSSRuleNode> getRules() { return rules; }
     public void addRule(CSSRuleNode rule) {
         rules.add(rule);
+    }
+    public void addRules( List<CSSRuleNode> rule) {
+        rules.addAll(rule);
     }
 
     @Override
@@ -35,8 +41,13 @@ public class CSSStyleNode extends CSSNode {
         children.addAll(rules);      // CSSRuleNode
         return children;
     }
+
     @Override
     public <T> T accept(TemplateASTVisitor<T> visitor) {
-        return visitor.visit(this);
+        return null;
     }
+//    @Override
+//    public <T> T accept(TemplateASTVisitor<T> visitor) {
+//        return visitor.visit(this);
+//    }
 }

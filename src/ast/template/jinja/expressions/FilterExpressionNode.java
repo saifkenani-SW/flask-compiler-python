@@ -20,16 +20,71 @@ public class FilterExpressionNode extends ExpressionNode {
         this.arguments = new ArrayList<>();
     }
 
-    public ExpressionNode getInput() { return input; }
-    public void setInput(ExpressionNode input) { this.input = input; }
-
-    public String getFilterName() { return filterName; }
-    public void setFilterName(String filterName) { this.filterName = filterName; }
-
-    public List<ExpressionNode> getArguments() { return arguments; }
-    public void addArgument(ExpressionNode argument) {
-        arguments.add(argument);
+    // Getters
+    public ExpressionNode getInput() {
+        return input;
     }
+
+    public String getFilterName() {
+        return filterName;
+    }
+
+    public List<ExpressionNode> getArguments() {
+        return Collections.unmodifiableList(arguments);
+    }
+
+    // Setters
+    public void setInput(ExpressionNode input) {
+        this.input = input;
+    }
+
+    public void setFilterName(String filterName) {
+        this.filterName = filterName;
+    }
+
+    // Add methods (similar to CallExpressionNode)
+    public void addArgument(ExpressionNode argument) {
+        if (argument != null) {
+            this.arguments.add(argument);
+        }
+    }
+
+    public void addAllArguments(List<ExpressionNode> arguments) {
+        if (arguments != null) {
+            this.arguments.addAll(arguments);
+        }
+    }
+
+    // Remove methods
+    public boolean removeArgument(ExpressionNode argument) {
+        return this.arguments.remove(argument);
+    }
+
+    // Utility methods
+    public boolean hasArguments() {
+        return !this.arguments.isEmpty();
+    }
+
+    public void clearArguments() {
+        this.arguments.clear();
+    }
+
+    public int getTotalParameters() {
+        return 1 + arguments.size(); // input + arguments
+    }
+
+    public boolean isChained() {
+        return input instanceof FilterExpressionNode;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("FilterExpressionNode{filter='%s', input=%s, arguments=%d, line=%d, column=%d}",
+                filterName,
+                input != null ? input.getClass().getSimpleName() : "null",
+                arguments.size(), getLine(), getColumn());
+    }
+
     @Override
     public List<TemplateNode> getChildren() {
         List<TemplateNode> children = new ArrayList<>();

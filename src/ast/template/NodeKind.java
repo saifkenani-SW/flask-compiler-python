@@ -8,12 +8,13 @@ public enum NodeKind {
     HTML_DOCUMENT, //done
     HTML_ATTRIBUTE, //done
     HTML_ELEMENT, //done
+    HTML_ATTRIBUTE_TEXT,
 
 //    HTML_OPENING_TAG,
 
     HTML_VOID_ELEMENT, // done
     HTML_SELF_CLOSING_ELEMENT, //done
-    HTML_Closing_Tag, //done
+    HTML_CLOSING_TAG, //done
     HTML_TEXT, //done
 
     // CSS

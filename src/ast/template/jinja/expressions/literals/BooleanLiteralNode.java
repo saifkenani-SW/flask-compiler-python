@@ -13,8 +13,31 @@ public class BooleanLiteralNode extends LiteralNode {
         this.value = value;
     }
 
-    public boolean getValue() { return value; }
-    public void setValue(boolean value) { this.value = value; }
+    // Getters
+    public boolean getValue() {
+        return value;
+    }
+
+    // Setters
+    public void setValue(boolean value) {
+        this.value = value;
+    }
+
+    // Utility methods
+    public boolean isTrue() {
+        return value;
+    }
+
+    public boolean isFalse() {
+        return !value;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("BooleanLiteralNode{value=%b, line=%d, column=%d}",
+                value, getLine(), getColumn());
+    }
+
     @Override
     public List<TemplateNode> getChildren() {
         return Collections.emptyList(); // لا يحتوي أي أبناء
@@ -23,4 +46,5 @@ public class BooleanLiteralNode extends LiteralNode {
     public <T> T accept(TemplateASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
+
 }

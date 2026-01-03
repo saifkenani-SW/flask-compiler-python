@@ -381,6 +381,7 @@ HTML_BOOLEAN_ATTR
                 | 'selected'
                 | 'autofocus'
                 | 'novalidate'
+                | 'hidden'
                 ;
 HTML_ID
     : [a-zA-Z][a-zA-Z0-9-]*

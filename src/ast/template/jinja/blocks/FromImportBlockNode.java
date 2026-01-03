@@ -23,9 +23,11 @@ public class FromImportBlockNode extends JinjaBlockNode {
     public void addImport(String importName) {
         imports.add(importName);
     }
+
+
     @Override
     public List<TemplateNode> getChildren() {
-        return super.getChildren(); // ليس لديه عناصر TemplateNode إضافية
+        return List.of();
     }
 
     @Override

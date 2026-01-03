@@ -6,16 +6,18 @@ import ast.visitors.TemplateASTVisitor;
 
 import java.util.List;
 
-public class HTMLClosingTagNode extends HTMLNode {
-    private String tagName;
+public class HTMLAttributeTextNode extends HTMLNode {
 
-    public HTMLClosingTagNode(int line, int column, String tagName) {
-        super(NodeKind.HTML_CLOSING_TAG, line, column);
-        this.tagName = tagName;
+    private final String text;
+
+    public HTMLAttributeTextNode(int line, int column, String text) {
+        super(NodeKind.HTML_ATTRIBUTE_TEXT, line, column);
+        this.text = text;
     }
 
-    public String getTagName() { return tagName; }
-    public void setTagName(String tagName) { this.tagName = tagName; }
+    public String getText() {
+        return text;
+    }
 
     @Override
     public List<TemplateNode> getChildren() {

@@ -19,14 +19,14 @@ public class ElifBlockNode extends JinjaBlockNode {
     public ExpressionNode getCondition() { return condition; }
     public void setCondition(ExpressionNode condition) { this.condition = condition; }
 
-    @Override
-    public List<TemplateNode> getChildren() {
-        List<TemplateNode> children = new ArrayList<>(super.getChildren());
-        if (condition != null) children.add(condition);
-        return children;
-    }
+
     @Override
     public <T> T accept(TemplateASTVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public List<TemplateNode> getChildren() {
+        return List.of();
     }
 }

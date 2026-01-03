@@ -24,7 +24,7 @@ public class SetBlockNode extends JinjaBlockNode {
 
     @Override
     public List<TemplateNode> getChildren() {
-        List<TemplateNode> children = new ArrayList<>(super.getChildren());
+        List<TemplateNode> children = new ArrayList<>();
         if (expression != null) children.add(expression);
         return children;
     }

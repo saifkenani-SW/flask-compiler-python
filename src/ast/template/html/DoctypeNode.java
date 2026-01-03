@@ -7,8 +7,15 @@ import ast.visitors.TemplateASTVisitor;
 import java.util.List;
 
 public class DoctypeNode extends HTMLNode {
-    public DoctypeNode(int line, int column) {
+
+    public String getDoctype() {
+        return doctype;
+    }
+
+    String doctype;
+    public DoctypeNode(int line, int column, String doctype) {
         super(NodeKind.DOCTYPE, line, column);
+        this.doctype = doctype;
     }
 
     @Override

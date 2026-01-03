@@ -19,7 +19,7 @@ public class ExtendsBlockNode extends JinjaBlockNode {
 
     @Override
     public List<TemplateNode> getChildren() {
-        return super.getChildren(); // لا يوجد عناصر Expression
+        return List.of();
     }
     @Override
     public <T> T accept(TemplateASTVisitor<T> visitor) {

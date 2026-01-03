@@ -21,6 +21,10 @@ public class ListExpressionNode extends ExpressionNode {
         elements.add(element);
     }
 
+    public void addAllElement(List<ExpressionNode> elements) {
+        this.elements.addAll(elements);
+    }
+
     @Override
     public List<TemplateNode> getChildren() {
         return elements != null ? new ArrayList<>(elements) : Collections.emptyList();

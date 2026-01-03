@@ -16,10 +16,72 @@ public class DictExpressionNode extends ExpressionNode {
         this.pairs = new LinkedHashMap<>();
     }
 
-    public Map<ExpressionNode, ExpressionNode> getPairs() { return pairs; }
-    public void addPair(ExpressionNode key, ExpressionNode value) {
-        pairs.put(key, value);
+    // Getters
+    public Map<ExpressionNode, ExpressionNode> getPairs() {
+        return Collections.unmodifiableMap(pairs);
     }
+
+    // Add methods
+    public void putPair(ExpressionNode key, ExpressionNode value) {
+        if (key != null && value != null) {
+            this.pairs.put(key, value);
+        }
+    }
+
+    public void putAllPairs(Map<ExpressionNode, ExpressionNode> pairs) {
+        if (pairs != null) {
+            this.pairs.putAll(pairs);
+        }
+    }
+
+    // Remove methods
+    public ExpressionNode removePair(ExpressionNode key) {
+        return this.pairs.remove(key);
+    }
+
+    // Utility methods
+    public boolean hasPairs() {
+        return !this.pairs.isEmpty();
+    }
+
+    public int size() {
+        return this.pairs.size();
+    }
+
+    public boolean isEmpty() {
+        return this.pairs.isEmpty();
+    }
+
+    public void clearPairs() {
+        this.pairs.clear();
+    }
+
+    public boolean containsKey(ExpressionNode key) {
+        return this.pairs.containsKey(key);
+    }
+
+    public boolean containsValue(ExpressionNode value) {
+        return this.pairs.containsValue(value);
+    }
+
+    public Set<ExpressionNode> keySet() {
+        return this.pairs.keySet();
+    }
+
+    public Collection<ExpressionNode> values() {
+        return this.pairs.values();
+    }
+
+    public Set<Map.Entry<ExpressionNode, ExpressionNode>> entrySet() {
+        return this.pairs.entrySet();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DictExpressionNode{line=%d, column=%d, size=%d}",
+                getLine(), getColumn(), pairs.size());
+    }
+
     @Override
     public List<TemplateNode> getChildren() {
         List<TemplateNode> children = new ArrayList<>();

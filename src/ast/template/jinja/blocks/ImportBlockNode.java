@@ -22,7 +22,7 @@ public class ImportBlockNode extends JinjaBlockNode {
     public void setAlias(String alias) { this.alias = alias; }
     @Override
     public List<TemplateNode> getChildren() {
-        return super.getChildren(); // لا يوجد Expression أو Blocks
+        return List.of();
     }
     @Override
     public <T> T accept(TemplateASTVisitor<T> visitor) {

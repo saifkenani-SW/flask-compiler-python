@@ -15,13 +15,14 @@ public class IncludeBlockNode extends JinjaBlockNode {
 
     public String getTemplateName() { return templateName; }
     public void setTemplateName(String templateName) { this.templateName = templateName; }
-    @Override
-    public List<TemplateNode> getChildren() {
-        return super.getChildren(); // فقط محتوى الblock إذا وُجد
-    }
+
     @Override
     public <T> T accept(TemplateASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
 
+    @Override
+    public List<TemplateNode> getChildren() {
+        return List.of();
+    }
 }
