@@ -11,11 +11,11 @@ import symbolTable.visitores.PythonSymbolTableBuilder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class CompilerTest {
+public class CompilerPythonTest {
 
     public static void main(String[] args) throws Exception {
 
-        String source = Files.readString(Path.of("test/error3"));
+        String source = Files.readString(Path.of("test/python/python_test.txt"));
 
         //   Lexer
         CharStream input = CharStreams.fromString(source);
