@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+{% extends "base.html" %}
+{% block title %}تفاصيل: {{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <h2>تفاصيل المنتج</h2>
+
+    <img src="{{ product.image_url }}" alt="صورة {{ product.name }}" class="detail-image">
+
+    <div class="info-block">
+        <p><strong>اسم المنتج:</strong> {{ product.name }}</p>
+        <p><strong>السعر:</strong> {{ product.price }} $</p>
+        <p><strong>الوصف:</strong></p>
+        <p class="description-text">{{ product.details }}</p>
+    </div>
+
+    <a href="{{ url_for('product_list') }}" class="back-link">العودة إلى القائمة الرئيسية</a>
+</div>
+{% endblock %}
+</html>
