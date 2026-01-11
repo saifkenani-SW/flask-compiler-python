@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "لابتوب ديل XPS 15",
+    "price": 3500.99,
+    "description": "لابتوب بمواصفات عالية مع شاشة 4K ومعالج i9",
+    "image": "laptop.jpg",
+    "category": "إلكترونيات",
+    "stock": 10,
+    "created_at": "2024-01-15"
+  },
+  {
+    "id": 2,
+    "name": "هاتف سامسونج S24",
+    "price": 1299.5,
+    "description": "هاتف ذكي مع كاميرة 200 ميجابكسل وشريحة ذكاء اصطناعي",
+    "image": "phone.jpg",
+    "category": "إلكترونيات",
+    "stock": 25,
+    "created_at": "2024-02-20"
+  },
+  {
+    "id": 3,
+    "name": "ساعة أبل الذكية",
+    "price": 599.99,
+    "description": "ساعة ذكية مع تتبع صحي متقدم",
+    "image": "watch.jpg",
+    "category": "إلكترونيات",
+    "stock": 15,
+    "created_at": "2024-03-10"
+  }
+]
