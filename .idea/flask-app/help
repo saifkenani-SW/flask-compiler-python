@@ -1,0 +1,6 @@
+to show html page enter
+1-cd flask-app/flask-app
+#لتشغيل البيئه الافتضارضيه
+2-source venv/bin/activate
+#لتشغيل الملف
+3-python app.py

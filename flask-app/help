@@ -1,2 +1,6 @@
-git push origin main    #  Push to GitHub
-git push gitlab main    # #  Push to GitLab
+to show html page enter
+1-cd flask-app
+#لتشغيل البيئه الافتضارضيه
+2-source venv/bin/activate
+#لتشغيل الملف
+3-python app.py
