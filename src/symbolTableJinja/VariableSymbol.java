@@ -1,6 +1,5 @@
-package symbolTable.JinjaSymbolTable;
+package symbolTableJinja;
 
-// ===== رمز المتغير =====
 public class VariableSymbol extends JinjaSymbol {
     private String valueType;  // string, number, boolean, list, dict, any
     private Object defaultValue;

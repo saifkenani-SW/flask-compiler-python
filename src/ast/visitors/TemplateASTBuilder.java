@@ -14,10 +14,8 @@ import ast.template.jinja.expressions.literals.*;
 
 import gen.FlaskTemplateParser;
 import gen.FlaskTemplateParserBaseVisitor;
-import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.*;
-import java.util.Stack;
 
 
 public class TemplateASTBuilder extends FlaskTemplateParserBaseVisitor<TemplateNode> {
@@ -693,9 +691,13 @@ public class TemplateASTBuilder extends FlaskTemplateParserBaseVisitor<TemplateN
     }
 
 
-    @Override
-    public TemplateNode visitJinjaExprNode(FlaskTemplateParser.JinjaExprNodeContext ctx) {
-        return visitJinjaExpression((FlaskTemplateParser.JinjaExpressionContext) ctx.jinjaExpression());
+
+    public List<TemplateNode> visitJinjaExprNode2(FlaskTemplateParser.JinjaExprNodeContext ctx) {
+        List<TemplateNode> list = new ArrayList<>();
+        for (var node : ctx.jinjaExpression()){
+            list.add(visitJinjaExpression(node));
+        }
+        return list;
     }
 
     @Override

@@ -1,8 +1,5 @@
-package symbolTable.JinjaSymbolTable;
+package symbolTableJinja;
 
-import ast.template.jinja.blocks.*;
-import ast.template.jinja.expressions.*;
-import ast.template.jinja.expressions.literals.*;
 import gen.FlaskTemplateParser;
 import gen.FlaskTemplateParserBaseVisitor;
 
@@ -20,7 +17,6 @@ public class JinjaSymbolTableBuilder extends FlaskTemplateParserBaseVisitor<Void
     public Void visitBlockStart(FlaskTemplateParser.BlockStartContext ctx) {
         String blockName = ctx.BLOCK_ID().getText();
 
-        // تعريف البلوك
         BlockSymbol blockSymbol = new BlockSymbol(
                 blockName,
                 ctx.start.getLine(),
@@ -28,13 +24,10 @@ public class JinjaSymbolTableBuilder extends FlaskTemplateParserBaseVisitor<Void
         );
         symbolTable.defineSymbol(blockSymbol);
 
-        // دخول نطاق البلوك
         symbolTable.enterScope("block:" + blockName, JinjaSymbolType.BLOCK);
 
-        // زيارة محتوى البلوك
         super.visitBlockStart(ctx);
 
-        // خروج من نطاق البلوك
         symbolTable.exitScope();
 
         return null;
@@ -47,7 +40,6 @@ public class JinjaSymbolTableBuilder extends FlaskTemplateParserBaseVisitor<Void
     public Void visitForStart(FlaskTemplateParser.ForStartContext ctx) {
         String loopVar = ctx.BLOCK_ID().getText();
 
-        // تعريف متغير الحلقة
         VariableSymbol loopSymbol = new VariableSymbol(
                 loopVar,
                 ctx.start.getLine(),
@@ -57,7 +49,6 @@ public class JinjaSymbolTableBuilder extends FlaskTemplateParserBaseVisitor<Void
         );
         symbolTable.defineSymbol(loopSymbol);
 
-        // دخول نطاق الحلقة
         symbolTable.enterScope("for:" + loopVar, JinjaSymbolType.LOOP_VARIABLE);
 
         super.visitForStart(ctx);
@@ -100,7 +91,7 @@ public class JinjaSymbolTableBuilder extends FlaskTemplateParserBaseVisitor<Void
                 ctx.start.getCharPositionInLine()
         );
 
-        // إضافة الباراميترز
+
         int position = 0;
         if (ctx.macroParameters() != null) {
             for (var param : ctx.macroParameters().BLOCK_ID()) {
@@ -112,13 +103,13 @@ public class JinjaSymbolTableBuilder extends FlaskTemplateParserBaseVisitor<Void
                         position++
                 );
                 macro.addParameter(p);
-                symbolTable.defineSymbol(p); // تعريف الباراميتر في الـ scope
+                symbolTable.defineSymbol(p);
+
             }
         }
 
         symbolTable.defineSymbol(macro);
 
-        // دخول نطاق الماكرو
         symbolTable.enterScope("macro:" + macroName, JinjaSymbolType.MACRO);
 
         super.visitMacroBlock(ctx);
@@ -207,7 +198,6 @@ public class JinjaSymbolTableBuilder extends FlaskTemplateParserBaseVisitor<Void
     // Utilities
     // ---------------------------
     private String inferType(FlaskTemplateParser.BlockExpressionContext ctx) {
-        // يمكن توسيع المنطق لاحقًا
         return "any";
     }
 

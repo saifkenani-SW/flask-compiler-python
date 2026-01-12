@@ -1,12 +1,11 @@
-package symbolTable.JinjaSymbolTable;
+package symbolTableJinja;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// ===== رمز البلوك =====
 public class BlockSymbol extends JinjaSymbol {
     private List<JinjaSymbol> contentSymbols;
-    private boolean isOverridden;  // تم التجاوز في قالب ابن
+    private boolean isOverridden;
 
     public BlockSymbol(String name, int line, int column) {
         super(name, JinjaSymbolType.BLOCK, line, column);

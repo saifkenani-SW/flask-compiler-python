@@ -1,4 +1,4 @@
-package symbolTable.JinjaSymbolTable;
+package symbolTableJinja;
 
 import java.util.HashMap;
 import java.util.Map;

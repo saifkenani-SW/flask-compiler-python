@@ -1,9 +1,8 @@
-package symbolTable.JinjaSymbolTable;
+package symbolTableJinja;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// ===== رمز الماكرو =====
 public class MacroSymbol extends JinjaSymbol {
     private List<ParameterSymbol> parameters;
     private List<JinjaSymbol> bodySymbols;

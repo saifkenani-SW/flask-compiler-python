@@ -1,6 +1,5 @@
-package symbolTable.JinjaSymbolTable;
+package symbolTableJinja;
 
-// ===== رمز الباراميتر =====
 public class ParameterSymbol extends VariableSymbol {
     private int position;
     private boolean hasDefault;

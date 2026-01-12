@@ -3,8 +3,8 @@ import gen.FlaskTemplateParser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import symbolTable.JinjaSymbolTable.JinjaSymbolTable;
-import symbolTable.JinjaSymbolTable.JinjaSymbolTableBuilder;
+import symbolTableJinja.JinjaSymbolTable;
+import symbolTableJinja.JinjaSymbolTableBuilder;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

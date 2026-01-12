@@ -1,9 +1,8 @@
-package symbolTable.JinjaSymbolTable;
+package symbolTableJinja;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// ===== رمز الدالة =====
 public class FunctionSymbol extends JinjaSymbol {
     private List<String> parameterTypes;
     private String returnType;

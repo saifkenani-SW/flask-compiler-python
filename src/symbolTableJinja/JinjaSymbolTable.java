@@ -1,4 +1,4 @@
-package symbolTable.JinjaSymbolTable;
+package symbolTableJinja;
 
 import java.util.*;
 
@@ -26,26 +26,21 @@ public class JinjaSymbolTable {
         this.extendsTemplates = new ArrayList<>();
         this.includedTemplates = new ArrayList<>();
 
-        // إنشاء النطاق العالمي
         currentScope = new SymbolScope("global", null);
         scopeStack.push(currentScope);
 
-        // إضافة الرموز المدمجة
         addBuiltInSymbols();
     }
 
     private void addBuiltInSymbols() {
-        // الدوال المدمجة في Jinja2
         defineSymbol(new FunctionSymbol("range", -1, -1));
         defineSymbol(new FunctionSymbol("dict", -1, -1));
         defineSymbol(new FunctionSymbol("list", -1, -1));
         defineSymbol(new FunctionSymbol("cycler", -1, -1));
 
-        // الدوال المدمجة في Flask
         defineSymbol(new FunctionSymbol("url_for", -1, -1));
         defineSymbol(new FunctionSymbol("get_flashed_messages", -1, -1));
 
-        // المتغيرات العالمية في Flask
         defineSymbol(new VariableSymbol("request", -1, -1, "Request"));
         defineSymbol(new VariableSymbol("session", -1, -1, "Session"));
         defineSymbol(new VariableSymbol("g", -1, -1, "AppContext"));
@@ -115,16 +110,13 @@ public class JinjaSymbolTable {
         return !extendsTemplates.isEmpty();
     }
 
-    // === التحليل ===
     public void analyze() {
         checkUndefinedVariables();
         checkUnusedBlocks();
         checkUnusedVariables();
-        checkMissingBlocks();
     }
 
     private void checkUndefinedVariables() {
-        // التحقق من المتغيرات المستخدمة ولكن غير المعرفة
         for (Map.Entry<String, List<Integer>> entry : symbolUsages.entrySet()) {
             String varName = entry.getKey();
             JinjaSymbol symbol = resolveSymbol(varName);
@@ -137,7 +129,6 @@ public class JinjaSymbolTable {
     }
 
     private void checkUnusedBlocks() {
-        // التحقق من البلوكات المعرفة ولكن غير المستخدمة
         for (JinjaSymbol symbol : getAllSymbols()) {
             if (symbol.getType() == JinjaSymbolType.BLOCK) {
                 String blockName = symbol.getName();
@@ -152,7 +143,6 @@ public class JinjaSymbolTable {
     }
 
     private void checkUnusedVariables() {
-        // التحقق من المتغيرات المعرفة ولكن غير المستخدمة
         for (JinjaSymbol symbol : getAllSymbols()) {
             if (symbol.getType() == JinjaSymbolType.VARIABLE &&
                     !((VariableSymbol) symbol).isLoopVar()) {
@@ -167,14 +157,9 @@ public class JinjaSymbolTable {
         }
     }
 
-    private void checkMissingBlocks() {
-        // إذا كان القالب يمتد من قالب آخر،
-        // تحقق من أن جميع البلوكات المطلوبة موجودة
-        // (يمكن تنفيذ هذا إذا كان لديك معلومات عن القالب الأب)
-    }
+
 
     private boolean isBuiltIn(String name) {
-        // قائمة بالرموز المدمجة
         Set<String> builtIns = Set.of(
                 "request", "session", "g", "config",
                 "url_for", "get_flashed_messages"
@@ -190,7 +175,6 @@ public class JinjaSymbolTable {
         return allSymbols;
     }
 
-    // === الطباعة والتقرير ===
     public void printSymbolTable() {
         System.out.println("\n" + "=".repeat(60));
         System.out.println("📋 JINJA2 SYMBOL TABLE: " + templateName);
@@ -211,7 +195,6 @@ public class JinjaSymbolTable {
             for (JinjaSymbol symbol : scope.getSymbols().values()) {
                 System.out.printf("%s│  • %s%n", indent, symbol);
 
-                // معلومات إضافية حسب النوع
                 if (symbol instanceof VariableSymbol var) {
                     if (var.isLoopVar()) {
                         System.out.printf("%s│    ↳ Loop variable%n", indent);
@@ -275,7 +258,6 @@ public class JinjaSymbolTable {
         }
     }
 
-    // === فئة النطاق الداخلية ===
     private static class SymbolScope {
         private final String name;
         private final SymbolScope parent;

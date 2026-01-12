@@ -1,13 +1,12 @@
-package symbolTable.JinjaSymbolTable;
+package symbolTableJinja;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// ===== رمز التضمين =====
 public class ImportSymbol extends JinjaSymbol {
     private String templatePath;
-    private String alias;  // إذا استخدمت "as"
-    private List<String> importedNames;  // للـ from imports
+    private String alias;
+    private List<String> importedNames;
 
     public ImportSymbol(String templatePath, int line, int column) {
         super(templatePath, JinjaSymbolType.IMPORT, line, column);

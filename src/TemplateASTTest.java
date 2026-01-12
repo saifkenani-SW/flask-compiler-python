@@ -10,9 +10,8 @@ import gen.FlaskTemplateParser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import symbolTable.JinjaSymbolTable.JinjaSymbolTable;
-import symbolTable.JinjaSymbolTable.JinjaSymbolTableBuilder;
-import symbol_table.*;
+import symbolTableJinja.JinjaSymbolTable;
+import symbolTableJinja.JinjaSymbolTableBuilder;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -24,33 +23,26 @@ public class TemplateASTTest {
     public static void main(String[] args) throws Exception {
 //        Path templatePath = Path.of("test/add_product");
 //        Path templatePath = Path.of("test/index");
-//        Path templatePath = Path.of("test/product_details");
-        Path templatePath = Path.of("test/base");
+        Path templatePath = Path.of("test/product_details");
+//        Path templatePath = Path.of("test/base");
 
-        // 1. إعداد Lexer
         CharStream charStream = CharStreams.fromPath(templatePath);
         FlaskLexer lexer = new FlaskLexer(charStream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
 
-        // 2. إعداد Parser
         FlaskTemplateParser parser = new FlaskTemplateParser(tokens);
 
-        // 3. إنشاء شجرة Parse
         FlaskTemplateParser.TemplateRootContext tree = (FlaskTemplateParser.TemplateRootContext) parser.template();
 
-        // 4. زيارة الشجرة باستخدام TemplateASTBuilder
         TemplateASTBuilder visitor = new TemplateASTBuilder();
         TemplateNode rootNode = visitor.visitTemplateRoot(tree);
 
-        // 2. بناء جدول الرموز
         JinjaSymbolTableBuilder builder = new JinjaSymbolTableBuilder("test.html");
         builder.visit(tree);
 
-        // 3. التحليل
         JinjaSymbolTable symbolTable = builder.getSymbolTable();
         symbolTable.analyze();
 
-        // 4. عرض النتائج
         symbolTable.printSymbolTable();
         symbolTable.printAnalysisReport();
 
